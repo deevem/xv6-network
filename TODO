@@ -1,0 +1,16 @@
+Assign works
+    1. for everyone:
+        xv6 book chap 1,2
+    resource: 
+            manual https://pdos.csail.mit.edu/6.828/2019/labs/net.html
+            https://github.com/duguosheng/xv6-labs-2020/tree/net/kernel
+    2. for individual
+        net driver: e1000(minor)
+            work:
+                complete driver code(write interfaces according to the example code)
+                document informing interfaces and functions
+        ethernet/ip/arp : Network Layer
+            work:
+                
+an overall description of the 
+                    
