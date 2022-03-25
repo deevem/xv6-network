@@ -2,6 +2,8 @@
 #define MHBUF_SIZE 100  // the max length of buf with a header of packet
 #define MBUF_DEFAULT_HEADROOM 128
 
+// -------------------- defs of mbuf ---------------------
+
 struct m_hdr {
     struct mbuf* mh_next;
     struct mbuf* mh_nextpkt;
@@ -27,11 +29,15 @@ struct mbuf {
     };
 };
 
+
+// ----------- headers of net protocal ------------------
+
+
 #define ETHADDR_LEN 6
 
 // the values of eth_hdr
-#define ETHTYPE_IP  0x0800
-#define ETHTYPE_ARP 0x0806 
+#define ETHTYPE_IP 0x0800
+#define ETHTYPE_ARP 0x0806
 
 // header of ethernet protocol
 struct eth_hdr {
@@ -43,19 +49,19 @@ struct eth_hdr {
 // values of ip_hdr.ip_p
 
 #define IPPROTO_ICMP 1  // Control message protocol
-#define IPPROTO_TCP  6  // Transmission control protocol
-#define IPPROTO_UDP  17 // User datagram protocol
+#define IPPROTO_TCP 6   // Transmission control protocol
+#define IPPROTO_UDP 17  // User datagram protocol
 
 // header of ip protocol
 struct ip_hdr {
-    uint8 ip_vhl;
-    uint8 ip_tos; // type of service
+    uint8  ip_vhl;
+    uint8  ip_tos;  // type of service
     uint16 ip_len;
     uint16 ip_id;
     uint16 ip_off;
-    uint8 ip_ttl;
-    uint8 ip_p;
-    uint8 ip_sum;
+    uint8  ip_ttl;
+    uint8  ip_p;
+    uint8  ip_sum;
     uint32 ip_src, ip_dst;
 };
 
@@ -64,7 +70,7 @@ inline uint32 MAKE_IP_ADDR(uint8 a, uint8 b, uint8 c, uint8 d) {
 }
 
 struct udp {
-    uint16 sport; // source port
+    uint16 sport;  // source port
     uint16 dport;
     uint16 ulen;
     uint16 sum  // check sum of udp
@@ -86,4 +92,3 @@ struct arp {
     // target IP
     uint32 tip;
 } __attribute__((packed));
-
