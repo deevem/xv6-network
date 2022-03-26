@@ -1,27 +1,10 @@
-#include <stdio.h> // perror
-// open
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include <unistd.h> // close()
-
-#include <stdlib.h> // exit
-#include <string.h> // memset
-#include <sys/ioctl.h> // ioctl
-
-#include <net/if.h> // ifreq
-#include <linux/if_tun.h> // IFF_TAP , IFF_NO_PI
+#include "tuntap_if.h"
 
 static int tun_fd;
 static char* dev;
 
 char *tapaddr = "10.0.0.5";
 char *taproute = "10.0.0.0/24";
-
-void run_cmd (char *cmd) {
-
-}
 
 // if == interface
 // open tuntap
