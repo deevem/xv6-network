@@ -5,6 +5,7 @@
 // header of ethernet protocal
 
 #define ETHADDR_LEN 6
+#define ETH_HDR_LEN sizeof(struct eth_hdr)
 
 // values of ip_hdr.ip_p
 
@@ -16,9 +17,5 @@ struct eth_hdr {
     uint8_t dsthost[ETHADDR_LEN];
     uint8_t srchost[ETHADDR_LEN];
     uint16_t type;
-}__attribute__((packed));
-
-struct eth_msg {
-    struct eth_hdr hdr;
     uint8_t payload[];
 }__attribute__((packed));

@@ -25,7 +25,7 @@ struct ip_hdr {
 
 
 int ip_rx(struct sk_buff *skb);
-static void ip_init_pkt(struct ip_hdr *iphdr);
+void ip_tx(struct sock* sk, struct sk_buff *skb);
 
 
 #endif
