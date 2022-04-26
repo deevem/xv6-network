@@ -6,8 +6,8 @@
 #include "skbuff.h"
 
 struct ip_hdr {
-    uint8_t  ihl = 4;        // Internet Header Length
-    uint8_t  verison = 4;
+    uint8_t  ihl;        // Internet Header Length
+    uint8_t  verison;
     uint8_t  tos;            // type of service
     uint16_t len;
     uint16_t id;             // identification
@@ -23,9 +23,15 @@ struct ip_hdr {
 
 #define IP_HDR_LEN sizeof(struct ip_hdr)
 
+// values of ip_hdr.protocal
+
+#define IPPROTO_ICMP 1  // Control message protocol
+#define IPPROTO_TCP 6   // Transmission control protocol
+#define IPPROTO_UDP 17  // User datagram protocol
+
 
 int ip_rx(struct sk_buff *skb);
-void ip_tx(struct sock* sk, struct sk_buff *skb);
+void ip_tx(struct sk_buff *skb, uint8_t protocal, uint32_t dst_ip);
 
 
 #endif

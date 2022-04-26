@@ -19,3 +19,5 @@
 
 #include <net/if.h> // ifreq
 #include <linux/if_tun.h> // IFF_TAP , IFF_NO_PI
+
+#include <arpa/inet.h> // htonl ntohl
