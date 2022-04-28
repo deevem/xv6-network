@@ -1,6 +1,6 @@
 #include "ethernet.h"
 
-void eth_tx(struct sk_buff *skb, uint16_t ethType) {
+static void eth_tx(struct mbuf *m, uint16_t ethType) {
 
     struct eth_hdr *ethhdr;
 

@@ -1,30 +1,30 @@
 #include "udp.h"
-#include "skbuff.h"
+#include "mbuf.h"
 #include "ip.h"
 
-void udp_tx(struct sk_buff *skb, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port) {
+void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port) {
     struct udp_hdr *udphdr;
 
     //TODO: push the udp header into mbuf
     udphdr->src_port = htons(src_port);
     udphdr->dst_port = htons(dst_port);
-    udphdr->len      = htons(skb->len);
+    udphdr->len      = htons(m->len);
     // TODO: now no checksum
     udphdr->checksum = 0;
 
-    ip_tx(skb, IPPROTO_UDP, dst_ip);
+    ip_tx(m, IPPROTO_UDP, dst_ip);
 }
 
 
-int udp_rx(struct sk_buff *skb, uint16_t len, struct ip_hdr *iphdr){
+int udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr){
     struct udp_hdr *udphdr;
     uint32_t src_ip;
     uint16_t src_port, dst_port;
 
-    // get udp hdr from skb
+    // get udp hdr from m
 
     if (udphdr == NULL) {
-        // free the skb
+        // free the m
         goto fail;
     }
 
@@ -33,7 +33,7 @@ int udp_rx(struct sk_buff *skb, uint16_t len, struct ip_hdr *iphdr){
 
     len -= sizeof(*udphdr);
     
-    if (len > skb->len)
+    if (len > m->len)
         goto fail;
 
     src_ip = ntohl(iphdr->src_addr);

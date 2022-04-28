@@ -1,5 +1,3 @@
-
-#include "netdev.h"
 #include "sysheaders.h"
 
 // header of ethernet protocal
@@ -19,4 +17,4 @@ struct eth_hdr {
 }__attribute__((packed));
 
 
-static void eth_tx(struct sk_buff *skb, uint16_t ethType);
+static void eth_tx(struct mbuf *m, uint16_t ethType);

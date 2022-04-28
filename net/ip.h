@@ -3,7 +3,7 @@
 
 #include "ethernet.h"
 #include "sysheaders.h"
-#include "skbuff.h"
+#include "mbuf.h"
 
 struct ip_hdr {
     uint8_t  ihl;        // Internet Header Length
@@ -30,8 +30,8 @@ struct ip_hdr {
 #define IPPROTO_UDP 17  // User datagram protocol
 
 
-int ip_rx(struct sk_buff *skb);
-void ip_tx(struct sk_buff *skb, uint8_t protocal, uint32_t dst_ip);
+int ip_rx(struct mbuf *m);
+void ip_tx(struct mbuf *m, uint8_t protocal, uint32_t dst_ip);
 
 
 #endif
