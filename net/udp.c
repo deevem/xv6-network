@@ -5,7 +5,8 @@
 void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port) {
     struct udp_hdr *udphdr;
 
-    //TODO: push the udp header into mbuf
+    udphdr = (struct udp_hdr*)mbufpush(m, sizeof(struct udp_hdr));
+
     udphdr->src_port = htons(src_port);
     udphdr->dst_port = htons(dst_port);
     udphdr->len      = htons(m->len);
