@@ -62,34 +62,34 @@ void tun_init() {
     // }
 }
 
-int main() {
-    int nread;
-    char buffer[4096];
-    char tun_name[IFNAMSIZ];
-    tun_init();
+// int main() {
+//     int nread;
+//     char buffer[4096];
+//     char tun_name[IFNAMSIZ];
+//     tun_init();
 
-    while (1) {
-        unsigned char ip[4];
-        nread = tun_read(buffer, sizeof(buffer));
-        if (nread < 0) {
-            perror("Reading from interface error");
-            close(tun_fd);
-            exit(1);
-        }
+//     while (1) {
+//         unsigned char ip[4];
+//         nread = tun_read(buffer, sizeof(buffer));
+//         if (nread < 0) {
+//             perror("Reading from interface error");
+//             close(tun_fd);
+//             exit(1);
+//         }
 
-        printf("Read %d bytes from tun/tap device\n", nread);
+//         printf("Read %d bytes from tun/tap device\n", nread);
 
-        memcpy(ip, &buffer[12], 4);
-        memcpy(&buffer[12], &buffer[16], 4);
-        memcpy(&buffer[16], ip, 4);
+//         memcpy(ip, &buffer[12], 4);
+//         memcpy(&buffer[12], &buffer[16], 4);
+//         memcpy(&buffer[16], ip, 4);
 
-        buffer[20] = 0;
-        *((unsigned short *)&buffer[22]) += 8;
+//         buffer[20] = 0;
+//         *((unsigned short *)&buffer[22]) += 8;
     
-        nread = tun_write(buffer, nread);
+//         nread = tun_write(buffer, nread);
 
-        printf("Write %d bytes to tun/tap device, that's %s\n", nread, buffer);
+//         printf("Write %d bytes to tun/tap device, that's %s\n", nread, buffer);
 
-    }
+//     }
     
-}
+// }

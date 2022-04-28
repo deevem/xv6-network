@@ -2,6 +2,7 @@
 #define UDP
 
 #include "sysheaders.h"
+#include "ip.h"
 #include "mbuf.h"
 
 struct udp_hdr {

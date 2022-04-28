@@ -6,18 +6,16 @@
 #include "mbuf.h"
 
 struct ip_hdr {
-    uint8_t  ihl;        // Internet Header Length
-    uint8_t  verison;
+    uint8_t  vhl;
     uint8_t  tos;            // type of service
     uint16_t len;
     uint16_t id;             // identification
     uint16_t frag_offset;
     uint8_t  ttl;            // time to live
-    uint8_t  protocal;
+    uint8_t  protocol;
     uint16_t checksum;
     uint32_t src_addr;       // source address
     uint32_t dst_addr;       // destination ip address
-    uint8_t  data[];
 } __attribute__((packed));
 
 
@@ -31,7 +29,7 @@ struct ip_hdr {
 
 
 int ip_rx(struct mbuf *m);
-void ip_tx(struct mbuf *m, uint8_t protocal, uint32_t dst_ip);
+void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip);
 
 
 #endif
