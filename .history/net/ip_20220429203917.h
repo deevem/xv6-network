@@ -6,7 +6,12 @@
 #include "mbuf.h"
 
 struct ip_hdr {
+<<<<<<< HEAD
+    uint8_t  ihl;        // Internet Header Length
+    uint8_t  version;
+=======
     uint8_t  vhl;
+>>>>>>> c0223af9505fc6a6413fa5f35a49418309c456b1
     uint8_t  tos;            // type of service
     uint16_t len;
     uint16_t id;             // identification

@@ -1,15 +1,13 @@
 #include "tuntap_if.h"
+#include <net/if.h>
 
-static int tun_fd;
-static char* dev;
-
-char *tapaddr = "10.0.0.5";
-char *taproute = "10.0.0.0/24";
+int tun_fd;
 
 // if == interface
 // open tuntap
-static int tun_alloc(char* dev) {
-    struct ifreq ifr;
+static int tun_alloc(char *dev, int flags)
+{
+struct ifreq ifr;
     int fd, err;
 
     if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
@@ -19,11 +17,9 @@ static int tun_alloc(char* dev) {
         exit(1);
     }
 
-    memset(&(ifr), 0, sizeof(ifr));
 
-    ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
-
-    if (*dev) {
+    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+    if( *dev ) {
         strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     }
 
@@ -46,50 +42,17 @@ int tun_write(char* buf, int len) {
 }
 
 void tun_init() {
-    dev = calloc(10, 1);
-    tun_fd = tun_alloc(dev);
-    
-    // if (set_if_up(dev) != 0) {
-    //     print_err("ERROR when setting up if\n");
-    // }
-
-    // if (set_if_route(dev, taproute) != 0) {
-    //     print_err("ERROR when setting route for if\n");
-    // }
-
-    // if (set_if_address(dev, tapaddr) != 0) {
-    //     print_err("ERROR when setting addr for if\n");
-    // }
-}
-
-int main() {
-    int nread;
-    char buffer[4096];
     char tun_name[IFNAMSIZ];
-    tun_init();
-
-    while (1) {
-        unsigned char ip[4];
-        nread = tun_read(buffer, sizeof(buffer));
-        if (nread < 0) {
-            perror("Reading from interface error");
-            close(tun_fd);
-            exit(1);
-        }
-
-        printf("Read %d bytes from tun/tap device\n", nread);
-
-        memcpy(ip, &buffer[12], 4);
-        memcpy(&buffer[12], &buffer[16], 4);
-        memcpy(&buffer[16], ip, 4);
-
-        buffer[20] = 0;
-        *((unsigned short *)&buffer[22]) += 8;
-    
-        nread = tun_write(buffer, nread);
-
-        printf("Write %d bytes to tun/tap device, that's %s\n", nread, buffer);
-
+    tun_name[0] = '\0';
+    tun_fd = tun_alloc(tun_name, IFF_TAP | IFF_NO_PI);
+    if (strcmp(tun_name, "tap0") == 0) {
+        system("sudo ip l s tap0 up");
+        system("sudo ip route add dev tap0 10.0.0.0/24");
+        system("sudo ip a a 10.0.0.3 dev tap0");
     }
-    
+    if (strcmp(tun_name, "tap1") == 0) {
+        system("sudo ip l s tap1 up");
+        // system("sudo ip route add dev tap1 10.1.1.0/24");
+        // system("sudo ip a a 10.1.1.2 dev tap1");
+    }
 }

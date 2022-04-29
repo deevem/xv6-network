@@ -24,6 +24,7 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     eth_tx(m, ETHTYPE_IP);
 }
 
+=======
 void ip_rx(struct mbuf* m) {
     // TODO error process
 
@@ -39,4 +40,5 @@ void ip_rx(struct mbuf* m) {
     else 
         mbuffree(m);
     return;
+>>>>>>> c0223af9505fc6a6413fa5f35a49418309c456b1
 }
