@@ -28,7 +28,7 @@ struct ip_hdr {
 #define IPPROTO_UDP 17  // User datagram protocol
 
 
-int ip_rx(struct mbuf *m);
+void ip_rx(struct mbuf *m);
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip);
 
 

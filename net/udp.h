@@ -14,7 +14,7 @@ struct udp_hdr {
 
 void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port);
 
-int udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr);
+void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr);
 
 
 

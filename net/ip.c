@@ -21,3 +21,20 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
 
     eth_tx(m, ETHTYPE_IP);
 }
+
+void ip_rx(struct mbuf* m) {
+    // TODO error process
+
+    struct ip_hdr *iphdr;
+    uint16_t len;
+
+    iphdr = (struct ip_hdr*)mbufpull(m, sizeof(struct ip_hdr));
+
+    len = ntohs(iphdr->len) - sizeof(struct ip_hdr);
+    printf("%s %d\n", "ip protocol", iphdr->protocol);
+    if (iphdr->protocol == IPPROTO_UDP)
+        udp_rx(m, len, iphdr);
+    else 
+        mbuffree(m);
+    return;
+}

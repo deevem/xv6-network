@@ -2,6 +2,7 @@
 #include "tuntap_if.h"
 #include "ip.h"
 
+
 void eth_tx(struct mbuf *m, uint16_t ethType) {
 
     struct eth_hdr *ethhdr;
@@ -28,4 +29,23 @@ void eth_tx(struct mbuf *m, uint16_t ethType) {
     mbuffree(m);
 
     printf("%s %d\n", "finished tun write", n);
+}
+
+void eth_rx(struct mbuf* m) {
+    struct eth_hdr *ethhdr;
+    uint16_t ethtype;
+    ethhdr = (struct eth_hdr*) mbufpull(m, sizeof(struct eth_hdr));
+    printf("running here\n");
+
+    if (ethhdr == NULL) {
+        printf("fail in eth \n");
+        return;
+    }
+    printf("%s %d\n", "ethtype", ethtype);
+    ethtype = ntohs(ethhdr->type);
+
+    if (ethtype == ETHTYPE_IP)
+        ip_rx(m);
+    else 
+        mbuffree(m);
 }
