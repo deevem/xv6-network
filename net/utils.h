@@ -3,6 +3,6 @@
 
 #include "sysheaders.h"
 
-uint8_t checksum(const unsigned char* addr, int len);
+uint16_t checksum(const unsigned char* addr, int len);
 
 #endif

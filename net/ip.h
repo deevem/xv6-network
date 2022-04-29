@@ -36,14 +36,14 @@ int checksum(void *addr, int count){
     uint16_t ptr;
     register uint32_t sum = 0;
     while(count > 1){
-        sum += *ptr++;
+        sum += ptr++;
         count -= 2;
     }
     if(count > 0){
         sum += *(uint8_t*) ptr;
     }
     while(sum >> 16)
-        sum = (sum & 0xffff) + (sum >> 16)
+        sum = (sum & 0xffff) + (sum >> 16);
 
 }
 

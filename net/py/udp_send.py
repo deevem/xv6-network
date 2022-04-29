@@ -14,4 +14,4 @@ def GetHostIP():
 x = GetHostIP()
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-s.sendto("test".encode(), ("127.0.0.1", 8080))
+s.sendto("test".encode(), ("10.0.0.3", 8080))

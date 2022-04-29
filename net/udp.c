@@ -9,12 +9,12 @@ void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_por
     udphdr = (struct udp_hdr*)mbufpush(m, sizeof(struct udp_hdr));
     printf("%s", "mbufpush finished in udp tx\n");
 
-
+    memset(udphdr, 0, sizeof(struct udp_hdr));
     udphdr->src_port = htons(src_port);
     udphdr->dst_port = htons(dst_port);
     udphdr->len      = htons(m->len);
     // TODO: now no checksum
-    udphdr->checksum = checksum((const unsigned char*)udphdr, sizeof(struct udp_hdr));
+    udphdr->checksum = 0;
 
     ip_tx(m, IPPROTO_UDP, dst_ip);
 }

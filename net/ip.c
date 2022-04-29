@@ -1,24 +1,23 @@
 #include "ip.h"
 #include "ethernet.h"
 #include "utils.h"
-
+#include "udp.h"
 
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     struct ip_hdr *iphdr;
 
     iphdr = (struct ip_hdr *)mbufpush(m, sizeof(struct ip_hdr));
-    memset(iphdr, 0, sizeof iphdr);
+    memset(iphdr, 0, sizeof(struct ip_hdr));
     iphdr->vhl = (4 << 4) | (20 >> 2);
     iphdr->protocol = protocol;
-    
     // TODO: local ip
     iphdr->src_addr = htonl(MAKE_IP_ADDR(127, 0, 0, 1));
     iphdr->dst_addr = htonl(dst_ip);
     iphdr->len = htons(m->len);
-    iphdr->ttl = 100;
+    iphdr->ttl = 64;
 
     iphdr->checksum = checksum((unsigned char*)iphdr, sizeof(struct ip_hdr));
-
+    printf("%d\n", (int)iphdr->checksum);
     printf("ip ready for tx\n");
 
     eth_tx(m, ETHTYPE_IP);
