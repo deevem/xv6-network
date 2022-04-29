@@ -34,18 +34,7 @@ int ip_rx(struct mbuf *m);
 void ip_tx(struct mbuf *m, uint8_t protocal, uint32_t dst_ip);
 
 int checksum(void *addr, int count){
-    //compute sum for count bytes starting from addr
     uint16_t ptr;
-    register uint32_t sum = 0;
-    while(count > 1){
-        sum += *ptr++;
-        count -= 2;
-    }
-    if(count > 0){
-        sum += *(uint8_t*) ptr;
-    }
-    while(sum >> 16)
-        sum = (sum & 0xffff) + (sum >> 16)
 
 }
 

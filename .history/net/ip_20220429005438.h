@@ -13,7 +13,7 @@ struct ip_hdr {
     uint16_t id;             // identification
     uint16_t frag_offset;
     uint8_t  ttl;            // time to live
-    uint8_t  protocol;
+    uint8_t  protocal;
     uint16_t checksum;
     uint32_t src_addr;       // source address
     uint32_t dst_addr;       // destination ip address
@@ -23,7 +23,7 @@ struct ip_hdr {
 
 #define IP_HDR_LEN sizeof(struct ip_hdr)
 
-// values of ip_hdr.protocol
+// values of ip_hdr.protocal
 
 #define IPPROTO_ICMP 1  // Control message protocol
 #define IPPROTO_TCP 6   // Transmission control protocol
@@ -33,20 +33,5 @@ struct ip_hdr {
 int ip_rx(struct mbuf *m);
 void ip_tx(struct mbuf *m, uint8_t protocal, uint32_t dst_ip);
 
-int checksum(void *addr, int count){
-    //compute sum for count bytes starting from addr
-    uint16_t ptr;
-    register uint32_t sum = 0;
-    while(count > 1){
-        sum += *ptr++;
-        count -= 2;
-    }
-    if(count > 0){
-        sum += *(uint8_t*) ptr;
-    }
-    while(sum >> 16)
-        sum = (sum & 0xffff) + (sum >> 16)
-
-}
 
 #endif

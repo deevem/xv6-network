@@ -19,8 +19,3 @@ void ip_tx(struct mbuf *m, uint8_t protocal, uint32_t dst_ip) {
 
     eth_tx(m, ETHTYPE_IP);
 }
-
-void ip_rx(struct mbuf *m){
-    struct ip_hdr *iphdr;
-    
-}
