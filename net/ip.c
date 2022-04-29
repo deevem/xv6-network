@@ -1,5 +1,7 @@
 #include "ip.h"
 #include "ethernet.h"
+#include "utils.h"
+
 
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     struct ip_hdr *iphdr;
@@ -10,12 +12,12 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     iphdr->protocol = protocol;
     
     // TODO: local ip
-    iphdr->src_addr = htonl(MAKE_IP_ADDR(10, 1, 1, 2));
+    iphdr->src_addr = htonl(MAKE_IP_ADDR(127, 0, 0, 1));
     iphdr->dst_addr = htonl(dst_ip);
     iphdr->len = htons(m->len);
     iphdr->ttl = 100;
-    // TODO: Checksum
-    iphdr->checksum = 0;
+
+    iphdr->checksum = checksum((unsigned char*)iphdr, sizeof(struct ip_hdr));
 
     printf("ip ready for tx\n");
 

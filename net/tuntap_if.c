@@ -52,7 +52,7 @@ void tun_init() {
     }
     if (strcmp(tun_name, "tap1") == 0) {
         system("sudo ip l s tap1 up");
-        system("sudo ip route add dev tap1 10.1.1.0/24");
-        system("sudo ip a a 10.1.1.2 dev tap0");
+        // system("sudo ip route add dev tap1 10.1.1.0/24");
+        // system("sudo ip a a 10.1.1.2 dev tap1");
     }
 }

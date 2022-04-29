@@ -1,6 +1,7 @@
 #include "udp.h"
 #include "mbuf.h"
 #include "ip.h"
+#include "utils.h"
 
 void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port) {
     struct udp_hdr *udphdr;
@@ -13,7 +14,7 @@ void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_por
     udphdr->dst_port = htons(dst_port);
     udphdr->len      = htons(m->len);
     // TODO: now no checksum
-    udphdr->checksum = 0;
+    udphdr->checksum = checksum((const unsigned char*)udphdr, sizeof(struct udp_hdr));
 
     ip_tx(m, IPPROTO_UDP, dst_ip);
 }

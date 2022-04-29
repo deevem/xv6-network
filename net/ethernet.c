@@ -24,7 +24,7 @@ void eth_tx(struct mbuf *m, uint16_t ethType) {
     iphdr = (struct ip_hdr*)(m->buf + 14);
     printf("%s %d\n", "ttl test", iphdr->ttl);
     
-    int n = tun_write(m->buf, MBUF_SIZE);
+    int n = tun_write(m->buf, m->len);
 
     mbuffree(m);
 
