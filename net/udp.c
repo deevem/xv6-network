@@ -6,6 +6,8 @@ void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_por
     struct udp_hdr *udphdr;
 
     udphdr = (struct udp_hdr*)mbufpush(m, sizeof(struct udp_hdr));
+    printf("%s", "mbufpush finished in udp tx\n");
+
 
     udphdr->src_port = htons(src_port);
     udphdr->dst_port = htons(dst_port);

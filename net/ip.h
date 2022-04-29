@@ -16,7 +16,7 @@ struct ip_hdr {
     uint16_t checksum;
     uint32_t src_addr;       // source address
     uint32_t dst_addr;       // destination ip address
-} __attribute__((packed));
+};
 
 
 #define IP_HDR_LEN sizeof(struct ip_hdr)

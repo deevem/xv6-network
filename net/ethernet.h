@@ -19,7 +19,6 @@ struct eth_hdr {
     uint8_t dsthost[ETHADDR_LEN];
     uint8_t srchost[ETHADDR_LEN];
     uint16_t type;
-    uint8_t payload[];
 }__attribute__((packed));
 
 
