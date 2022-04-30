@@ -2,11 +2,20 @@
 #include "ethernet.h"
 #include "utils.h"
 #include "udp.h"
+#include "icmp.h"
+#include "tuntap_if.h"
 
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     struct ip_hdr *iphdr;
 
+    printf("test %d\n", m->head - m->buf);
     iphdr = (struct ip_hdr *)mbufpush(m, sizeof(struct ip_hdr));
+    
+    if (iphdr == NULL) {
+        printf("iphde is NULL\n");
+        return;
+    }
+
     memset(iphdr, 0, sizeof(struct ip_hdr));
     iphdr->vhl = (4 << 4) | (20 >> 2);
     iphdr->protocol = protocol;
@@ -20,7 +29,8 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     printf("%d\n", (int)iphdr->checksum);
     printf("ip ready for tx\n");
 
-    eth_tx(m, ETHTYPE_IP);
+    // eth_tx(m, ETHTYPE_IP);
+    tun_write(m->buf, m->len);
 }
 
 void ip_rx(struct mbuf* m) {
@@ -35,6 +45,8 @@ void ip_rx(struct mbuf* m) {
     printf("%s %d\n", "ip protocol", iphdr->protocol);
     if (iphdr->protocol == IPPROTO_UDP)
         udp_rx(m, len, iphdr);
+    else if (iphdr->protocol == IPPROTO_ICMP)
+        icmp_incoming(m);       
     else 
         mbuffree(m);
     return;

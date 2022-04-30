@@ -19,3 +19,4 @@ user/usys.S
 .clang-format
 /net/testudp
 /net/recvudp
+/net/icmptest
