@@ -13,7 +13,7 @@ int main() {
         t++;
         printf("%s %d\n", "test ", t);
         struct mbuf* m = mbufalloc(42);
-        char * payload = "test";
+        char * payload = "this is my udp packet";
         char* tmp = mbufput(m, strlen(payload));
         for (int i =0 ;i < strlen(payload); i++)
             tmp[i] = payload[i];
