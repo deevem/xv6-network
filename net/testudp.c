@@ -18,7 +18,7 @@ int main() {
         for (int i =0 ;i < strlen(payload); i++)
             tmp[i] = payload[i];
         printf("%s %d\n", "running", strlen(payload));
-        udp_tx(m, MAKE_IP_ADDR(10,1,1,2), 38628, 12345);
+        udp_tx(m, MAKE_IP_ADDR(127,0,0,1), 38628, 12345);
     }
     return 0;
 }

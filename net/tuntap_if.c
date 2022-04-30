@@ -18,7 +18,7 @@ struct ifreq ifr;
     }
 
 
-    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+    ifr.ifr_flags = flags;
     if( *dev ) {
         strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     }
@@ -44,12 +44,22 @@ int tun_write(char* buf, int len) {
 void tun_init() {
     char tun_name[IFNAMSIZ];
     tun_name[0] = '\0';
-    tun_fd = tun_alloc(tun_name, IFF_TAP | IFF_NO_PI);
+    tun_fd = tun_alloc(tun_name, IFF_TUN | IFF_NO_PI);
     printf("%s\n", tun_name);
     if (strcmp(tun_name, "tap0") == 0) {
         system("sudo ip l s tap0 up");
-        system("sudo ip route add dev tap0 10.0.0.0/24");
-        system("sudo ip a a 10.0.0.3 dev tap0");
+        // system("sudo ip route add dev tap0 10.0.0.0/24");
+        system("sudo ip a a 10.2.2.3/24 dev tap0");
+    }
+    if (strcmp(tun_name, "tun0") == 0) {
+        system("sudo ip l s tun0 up");
+        // system("sudo ip route add dev tun0 10.0.0.0/24");
+        system("sudo ip a a 10.1.1.2/24 dev tun0");
+    }
+    if (strcmp(tun_name, "tun1") == 0) {
+        system("sudo ip l s tun1 up");
+        // system("sudo ip route add dev tun0 10.0.0.0/24");
+        system("sudo ip a a 10.0.0.2/24 dev tun1");
     }
     if (strcmp(tun_name, "tap1") == 0) {
         system("sudo ip l s tap1 up");

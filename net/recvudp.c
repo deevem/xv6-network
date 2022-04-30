@@ -18,7 +18,7 @@ int main() {
 
         printf("%s %d %d\n", "tap finished", t, n);
         m->len = n;
-        eth_rx(m);
+        ip_rx(m);
     }
     return 0;
 }

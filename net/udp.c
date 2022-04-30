@@ -64,7 +64,7 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     printf("%s %d %d\n", "dst port", dst_port, udphdr->dst_port);
 
     if (1) {
-        for (int i = 1; i <= len; i++)
+        for (int i = 0; i < len; i++)
            printf("%c", *(m->head + i));
     }
     printf("------\n");
