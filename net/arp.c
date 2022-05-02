@@ -6,6 +6,8 @@ static void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip){
 
     m = mbufalloc(MBUF_SIZE);
     
+    uint32_t local_ip = MAKE_IP_ADDR(10,1,1,5);
+
     hdr = mbufput(m,sizeof(*hdr));
     hdr->ar_hrd = ARP_HRD_ETHER;
     hdr->ar_pro = ETHTYPE_IP;
