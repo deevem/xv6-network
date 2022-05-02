@@ -2,6 +2,7 @@
 #include "mbuf.h"
 #include "ip.h"
 #include "utils.h"
+#include "dns.h"
 
 void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port) {
     struct udp_hdr *udphdr;
@@ -55,6 +56,11 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     src_port = ntohs(udphdr->src_port);
     dst_port = ntohs(udphdr->dst_port);
     
+    // DNS Packet in the port 53
+    if (dst_port == 53) {
+        dns_response(m->head, m->len);
+        return;
+    }
 
     // TODO : throw the buffer to the socket UDP recv
 
@@ -63,7 +69,8 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     printf("%s %d\n", "src port", src_port);
     printf("%s %d %d\n", "dst port", dst_port, udphdr->dst_port);
 
-    if (1) {
+    // out test port
+    if (dst_port == 12345) {
         for (int i = 0; i < len; i++)
            printf("%c", *(m->head + i));
     }

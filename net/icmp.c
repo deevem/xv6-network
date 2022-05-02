@@ -34,10 +34,12 @@ void icmp_reply(struct mbuf* m) {
     icmphdr->cksum = checksum(icmphdr, tmp);
 
     uint32_t x = iphdr->src_addr;
-    iphdr->dst_addr = x;
     iphdr->src_addr = iphdr->dst_addr;
+    iphdr->dst_addr = x;
 
-    ip_tx(m, IPPROTO_ICMP, ntohl(iphdr->dst_addr));
+    iphdr->protocol = IPPROTO_ICMP;
+
+    ip_tx_ready(m);
 
     mbuffree(m);
 }

@@ -5,6 +5,20 @@
 #include "icmp.h"
 #include "tuntap_if.h"
 
+void ip_tx_ready(struct mbuf* m) {
+    struct ip_hdr *iphdr;
+    iphdr = (struct ip_hdr *)mbufpush(m, sizeof(struct ip_hdr));
+
+    if (iphdr == NULL) {
+        printf("iphdr is NULL\n");
+        return;
+    }
+    iphdr->checksum = 0;
+    iphdr->checksum = checksum((unsigned char*)iphdr, sizeof(struct ip_hdr));
+
+    tun_write(m->head, m->len);
+}
+
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     struct ip_hdr *iphdr;
 
@@ -12,7 +26,7 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     iphdr = (struct ip_hdr *)mbufpush(m, sizeof(struct ip_hdr));
     
     if (iphdr == NULL) {
-        printf("iphde is NULL\n");
+        printf("iphdr is NULL\n");
         return;
     }
 
@@ -30,7 +44,7 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     printf("ip ready for tx\n");
 
     // eth_tx(m, ETHTYPE_IP);
-    tun_write(m->buf, m->len);
+    tun_write(m->head, m->len);
 }
 
 void ip_rx(struct mbuf* m) {
