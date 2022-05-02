@@ -14,9 +14,9 @@ struct arp_hdr{
     uint8_t ar_pln;//protocol address length
     uint16_t ar_op;//request / response
     uint8_t arp_sha[ETHADDR_LEN];//sender mac address
-    uint8_t arp_sip[4];//sender ip address
+    uint32_t arp_sip;//sender ip address
     uint8_t arp_tha[ETHADDR_LEN];//receiver mac address
-    uint8_t arp_tip[4];//receiver ip address
+    uint32_t arp_tip;//receiver ip address
 } __attribute__((packed));
 
 enum {
@@ -24,7 +24,7 @@ enum {
     ARP_OP_REPLY = 2,
 };
 
-static void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip);
-static void arp_rx(struct mbuf* mbuffer);
+void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip);
+void arp_rx(struct mbuf* mbuffer);
 
 #endif

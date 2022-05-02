@@ -45,12 +45,7 @@ void tun_init() {
     char tun_name[IFNAMSIZ];
     tun_name[0] = '\0';
     tun_fd = tun_alloc(tun_name, IFF_TUN | IFF_NO_PI);
-    printf("%s\n", tun_name);
-    if (strcmp(tun_name, "tap0") == 0) {
-        system("sudo ip l s tap0 up");
-        // system("sudo ip route add dev tun0 10.0.0.0/24");
-        system("sudo ip a a 10.1.1.2/24 dev tap0");
-    }
+    printf("Init %s\n", tun_name);
     if (strcmp(tun_name, "tun0") == 0) {
         system("sudo ip l s tun0 up");
         // system("sudo ip route add dev tun0 10.0.0.0/24");
@@ -61,9 +56,19 @@ void tun_init() {
         // system("sudo ip route add dev tun0 10.0.0.0/24");
         system("sudo ip a a 10.0.0.2/24 dev tun1");
     }
+}
+
+void tap_init() {
+    char tun_name[IFNAMSIZ];
+    tun_name[0] = '\0';
+    tun_fd = tun_alloc(tun_name, IFF_TAP | IFF_NO_PI);
+    printf("Init %s\n", tun_name);
+    if (strcmp(tun_name, "tap0") == 0) {
+        system("sudo ip l s tap0 up");
+        system("sudo ip a a 10.1.1.2/24 dev tap0");
+    }
     if (strcmp(tun_name, "tap1") == 0) {
         system("sudo ip l s tap1 up");
-        // system("sudo ip route add dev tun0 10.0.0.0/24");
         system("sudo ip a a 10.0.0.2/24 dev tap1");
     }
 }

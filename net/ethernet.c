@@ -1,6 +1,7 @@
 #include "ethernet.h"
 #include "tuntap_if.h"
 #include "ip.h"
+#include "arp.h"
 
 #include <linux/if_packet.h>
 #include <sys/socket.h>
@@ -29,7 +30,7 @@ void eth_tx(struct mbuf *m, uint16_t ethType) {
     iphdr = (struct ip_hdr*)(m->buf + 14);
     printf("%s %d\n", "ttl test", iphdr->ttl);
     
-    int n = tun_write(m->buf + 14, m->len - 14);
+    int n = tun_write(m->buf, m->len);
 
 	// struct sockaddr_in sin, din;
     // int one = 1;
@@ -81,6 +82,8 @@ void eth_rx(struct mbuf* m) {
 
     if (ethtype == ETHTYPE_IP)
         ip_rx(m);
+    else if (ethtype == ETHTYPE_ARP)
+        arp_rx(m);
     else 
         mbuffree(m);
 }
