@@ -29,4 +29,4 @@ arptest: arptest.o $(NETOBJECT)
 
 clean: 
 	-rm -f *.o
-	-rm -f recvudp testudp icmptest testdns
+	-rm -f recvudp testudp icmptest testdns arptest

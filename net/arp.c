@@ -9,29 +9,30 @@ void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip){
     
     uint32_t local_ip = MAKE_IP_ADDR(10,1,1,5);
 
-    hdr->ar_hrd = ARP_HRD_ETHER;
-    hdr->ar_pro = ETHTYPE_IP;
+    hdr->ar_hrd = htons(ARP_HRD_ETHER);
+    hdr->ar_pro = htons(ETHTYPE_IP);
     hdr->ar_hln = ETHADDR_LEN;
     hdr->ar_pln = sizeof(uint32_t);
     hdr->ar_op = htons(op);
 
     memmove(hdr->arp_sha,local_mac,ETHADDR_LEN);
-    hdr->arp_sip = local_ip;
+    hdr->arp_sip = htonl(local_ip);
     memmove(hdr->arp_tha,desmac,ETHADDR_LEN);
-    hdr->arp_tip = tip;
+    hdr->arp_tip = htonl(tip);
 
     eth_tx(m,ETHTYPE_ARP);
 }
 
-void arp_rx(struct mbuf* mbuffer){
+void arp_rx(struct mbuf* mbuffer) {
 
     struct arp_hdr* hdr;
     uint8_t smac[ETHADDR_LEN];
     uint32_t sip,tip;
     
     uint32_t local_ip = MAKE_IP_ADDR(10,1,1,5);
+    hdr = (struct arp_hdr*)mbufpull(mbuffer,sizeof(*hdr));
 
-    hdr = mbufpull(mbuffer,sizeof(*hdr));
+
     if(!hdr)
         goto fin;
     
@@ -41,11 +42,12 @@ void arp_rx(struct mbuf* mbuffer){
         hdr->ar_pln != sizeof(uint32_t))
         goto fin;
 
-    if (ntohs(hdr->arp_tip != local_ip) || ntohs(hdr->ar_op != ARP_OP_REQUEST))
+    if (ntohl(hdr->arp_tip) != local_ip || ntohs(hdr->ar_op) != ARP_OP_REQUEST)
         goto fin;
-    
+
     memmove(smac,hdr->arp_sha,ETHADDR_LEN);
-    arp_tx(ARP_OP_REPLY,smac,hdr->arp_sip);
+
+    arp_tx(ARP_OP_REPLY,smac, ntohl(hdr->arp_sip));
 fin:
     mbuffree(mbuffer);
 }

@@ -7,7 +7,6 @@
 #define ARP_HRD_ETHER 1
 
 struct arp_hdr{
-    struct eth_hdr ar_ethhdr;
     uint16_t ar_hrd;//hardware type
     uint16_t ar_pro;//protocol type
     uint8_t ar_hln;//hardware address length

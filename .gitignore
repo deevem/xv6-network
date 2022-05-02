@@ -20,3 +20,5 @@ user/usys.S
 /net/testudp
 /net/recvudp
 /net/icmptest
+/net/testdns
+/net/arptest
