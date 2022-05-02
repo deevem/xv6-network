@@ -1,17 +1,31 @@
 %.o : %.c
 	gcc -c $^ -Wall
 
-testudp: testudp.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o 
-	gcc -o testudp testudp.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o -Wall
+NETOBJECT = \
+	$Kethernet.o \
+	$Kip.o \
+	$Karp.o \
+	$Kudp.o \
+	$Kmbuf.o \
+	$Ktuntap_if.o \
+	$Kutils.o \
+	$Kicmp.o \
+	$Kdns.o \
 
-recvudp: recvudp.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o 
-	gcc -o recvudp recvudp.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o -Wall
+testudp: testudp.o $(NETOBJECT)
+	gcc -o testudp testudp.o $(NETOBJECT) -Wall
 
-icmptest: icmptest.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o 
-	gcc -o icmptest icmptest.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o -Wall
+recvudp: recvudp.o $(NETOBJECT)
+	gcc -o recvudp recvudp.o $(NETOBJECT) -Wall
 
-testdns: testdns.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o
-	gcc -o testdns testdns.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o -Wall
+icmptest: icmptest.o $(NETOBJECT)
+	gcc -o icmptest icmptest.o $(NETOBJECT) -Wall
+
+testdns: testdns.o $(NETOBJECT)
+	gcc -o testdns testdns.o $(NETOBJECT) -Wall
+
+arptest: arptest.o $(NETOBJECT)
+	gcc -o arptest arptest.o $(NETOBJECT) -Wall
 
 clean: 
 	-rm -f *.o
