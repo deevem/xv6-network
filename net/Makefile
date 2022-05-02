@@ -15,4 +15,4 @@ testdns: testdns.o udp.o ip.o ethernet.o mbuf.o tuntap_if.o utils.o icmp.o dns.o
 
 clean: 
 	-rm -f *.o
-	-rm -f recvudp testudp
+	-rm -f recvudp testudp icmptest testdns
