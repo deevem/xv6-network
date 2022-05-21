@@ -1,5 +1,17 @@
 K=kernel
 U=user
+N=kernel/net 
+
+NETOBJS = \
+	kernel/net/device.o \
+	kernel/net/arp.o \
+	kernel/net/dns.o \
+	kernel/net/ethernet.o \
+	kernel/net/icmp.o \
+	kernel/net/ip.o \
+	kernel/net/mbuf.o \
+	kernel/net/udp.o \
+	kernel/net/utils.o \
 
 OBJS = \
   $K/entry.o \
@@ -29,7 +41,7 @@ OBJS = \
   $K/kernelvec.o \
   $K/plic.o \
   $K/virtio_disk.o \
-  $K/e1000.o
+  $(NETOBJS) \
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -142,6 +154,7 @@ fs.img: mkfs/mkfs README $(UPROGS)
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	*/*.o */*.d */*.asm */*.sym \
+	*/*/*.o */*/*.d \
 	$U/initcode $U/initcode.out $K/kernel fs.img \
 	mkfs/mkfs .gdbinit \
         $U/usys.S \

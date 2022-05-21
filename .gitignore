@@ -12,13 +12,8 @@ initcode
 initcode.out
 kernelmemfs
 mkfs
-.vscode
+.vscode/
 kernel/kernel
 user/usys.S
 .gdbinit
 .clang-format
-/net/testudp
-/net/recvudp
-/net/icmptest
-/net/testdns
-/net/arptest

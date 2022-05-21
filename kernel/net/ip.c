@@ -3,7 +3,6 @@
 #include "utils.h"
 #include "udp.h"
 #include "icmp.h"
-#include "tuntap_if.h"
 
 void ip_tx_ready(struct mbuf* m) {
     struct ip_hdr *iphdr;
@@ -16,7 +15,7 @@ void ip_tx_ready(struct mbuf* m) {
     iphdr->checksum = 0;
     iphdr->checksum = checksum((unsigned char*)iphdr, sizeof(struct ip_hdr));
 
-    tun_write(m->head, m->len);
+    eth_tx(m, ETHTYPE_IP);
 }
 
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
@@ -43,8 +42,7 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     printf("%d\n", (int)iphdr->checksum);
     printf("ip ready for tx\n");
 
-    // eth_tx(m, ETHTYPE_IP);
-    tun_write(m->head, m->len);
+    eth_tx(m, ETHTYPE_IP);
 }
 
 void ip_rx(struct mbuf* m) {

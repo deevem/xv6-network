@@ -5,7 +5,6 @@
 void icmp_incoming(struct mbuf* m) {
 
     struct icmp_hdr* icmphdr = (struct icmp_hdr*)mbufpull(m, sizeof(struct icmp_hdr));
-    struct ip_hdr *iphdr = (struct ip_hdr *)((char*)icmphdr - sizeof(struct ip_hdr));
 
     switch (icmphdr->type) {
     case ICMP_ECHO:
@@ -31,7 +30,7 @@ void icmp_reply(struct mbuf* m) {
 
     icmphdr->type = ICMP_REPLY;
     icmphdr->cksum = 0;
-    icmphdr->cksum = checksum(icmphdr, tmp);
+    icmphdr->cksum = checksum((unsigned char*)icmphdr, tmp);
 
     uint32_t x = iphdr->src_addr;
     iphdr->src_addr = iphdr->dst_addr;

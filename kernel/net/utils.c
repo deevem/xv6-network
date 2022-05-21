@@ -3,7 +3,7 @@
 uint16_t checksum(const unsigned char* addr, int len) {
 
     int nleft = len;
-    const uint16_t *w = (const uint8_t*) addr;
+    const uint16_t *w = (const uint16_t*) addr;
     uint32_t sum = 0;
     uint16_t answer = 0;
 

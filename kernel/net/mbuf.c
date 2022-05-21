@@ -44,7 +44,7 @@ struct mbuf* mbufalloc(unsigned int hdr_size) {
 
     if (hdr_size > MBUF_SIZE)
         return 0;
-    m = malloc(MBUF_SIZE + 1024);
+    m = kalloc();
 
     if (m == NULL)
         return 0;
@@ -57,8 +57,7 @@ struct mbuf* mbufalloc(unsigned int hdr_size) {
 }
 
 void mbuffree(struct mbuf *m) {
-    // kfree(m)
-    free(m);
+    kfree(m);
 }
 
 // ------------mbuf_queue-------------

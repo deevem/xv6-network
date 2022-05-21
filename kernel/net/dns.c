@@ -4,7 +4,7 @@
     from :abcd.efgh.ijk.lmno
     to   :4abcd4eghh3ijk4lmno
 */
-static void qname_encoder(char* qname, char* host) {
+static void qname_encoder(char* qname, const char* host) {
     int pos = 0;
     for (int i = 0; i < strlen(host); i++) {
         if (host[i] != '.')
@@ -87,11 +87,14 @@ int dns_response(char* buf, int recv_len) {
         if (ntohs(d->type) == ARECORD && ntohs(d->len) == 4) {
             record = 1;
             printf("DNS arecord for %s is ", qname);
-            uint8_t* ip = (buf + len);
+            uint8_t* ip = (uint8_t*)(buf + len);
             printf("%d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
             len += 4;
         }
     }
     exit(0);
     // TODO : check recv_len, record
+
+    // ..... 
+    return record;
 }
