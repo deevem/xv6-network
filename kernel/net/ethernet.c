@@ -1,5 +1,4 @@
 #include "ethernet.h"
-#include "device.h"
 #include "ip.h"
 #include "arp.h"
 
@@ -29,7 +28,7 @@ void eth_tx(struct mbuf *m, uint16_t ethType) {
     iphdr = (struct ip_hdr*)(m->buf + 14);
     printf("%s %d\n", "ttl test", iphdr->ttl);
     
-    int n = net_write(m->buf, m->len);
+    int n = e1000_transmit(m);
 
     mbuffree(m);
     printf("%s %d\n", "finished net write", n);

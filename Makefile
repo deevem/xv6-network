@@ -3,7 +3,6 @@ U=user
 N=kernel/net 
 
 NETOBJS = \
-	kernel/net/device.o \
 	kernel/net/arp.o \
 	kernel/net/dns.o \
 	kernel/net/ethernet.o \
@@ -12,7 +11,9 @@ NETOBJS = \
 	kernel/net/mbuf.o \
 	kernel/net/udp.o \
 	kernel/net/utils.o \
-
+	kernel/net/e1000.o \
+	kernel/net/pci.o \
+	
 OBJS = \
   $K/entry.o \
   $K/start.o \

@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "types.h": "c",
-        "sysheaders.h": "c",
-        "ethernet.h": "c",
-        "device.h": "c",
-        "arp.h": "c"
-    }
-}
