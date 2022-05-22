@@ -32,6 +32,9 @@ main()
     // init for network device
     pci_init();
 
+    // run net test
+    testnet();
+
     userinit();      // first user process
     __sync_synchronize();
     started = 1;

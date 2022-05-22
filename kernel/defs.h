@@ -187,5 +187,6 @@ void            virtio_disk_intr(void);
 
 // network init
 void pci_init();
+void e1000_intr(void);
 
-#include "net/e1000_dev.h"
+#include "net/test/testnet.h"

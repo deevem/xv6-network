@@ -34,8 +34,11 @@ pci_init()
     uint32 id = base[0];
     
     // 100e:8086 is an e1000
+    printf("pci init called %d %d\n", id, 0x100e8086);
 
     if(id == 0x100e8086){
+      
+      printf("found e10000\n");
       // command and status register.
       // bit 0 : I/O access enable
       // bit 1 : memory access enable

@@ -3,6 +3,7 @@
 
 #include "sysheaders.h"
 #include "mbuf.h"
+#include "e1000_dev.h"
 // header of ethernet protocal
 
 #define ETHADDR_LEN 6

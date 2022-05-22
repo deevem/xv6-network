@@ -30,6 +30,9 @@ e1000_init(uint32 *xregs)
 {
   int i;
 
+  printf("e1000 init begin\n");
+
+
   initlock(&e1000_lock, "e1000");
 
   regs = xregs;
@@ -91,6 +94,8 @@ e1000_init(uint32 *xregs)
   regs[E1000_RDTR] = 0; // interrupt after every received packet (no timer)
   regs[E1000_RADV] = 0; // interrupt after every packet (no timer)
   regs[E1000_IMS] = (1 << 7); // RXDW -- Receiver Descriptor Write Back
+
+  printf("e1000 init succeed\n");
 }
 
 int
@@ -105,17 +110,21 @@ e1000_transmit(struct mbuf *m)
   // by reading the E1000_TDT control register.
   acquire(&e1000_lock);
 
+
+  printf("this is tx \n");
   uint32 index = regs[E1000_TDT];
   
   // check if the the ring is overflowing. 
   // If E1000_TXD_STAT_DD is not set in the descriptor indexed by E1000_TDT, 
   // the E1000 hasn't finished the corresponding previous transmission request, 
   // so return an error.
+
   if ((tx_ring[index].status & E1000_TXD_STAT_DD) == 0) {
       release(&e1000_lock);
       printf("buffer overflow\n");
       return -1;
   }
+
 
   // use mbuffree() to free the last mbuf that 
   // was transmitted from that descriptor (if there was one).

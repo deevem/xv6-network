@@ -130,4 +130,3 @@ struct rx_desc
 
 int e1000_transmit(struct mbuf *m);
 void e1000_init(uint32 *xregs);
-void e1000_intr(void);

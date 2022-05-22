@@ -13,6 +13,7 @@ NETOBJS = \
 	kernel/net/utils.o \
 	kernel/net/e1000.o \
 	kernel/net/pci.o \
+	kernel/net/test/testnet.o \
 	
 OBJS = \
   $K/entry.o \
@@ -76,6 +77,8 @@ CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
+
+CFLAGS += -DNET_TESTS_PORT=$(SERVERPORT)
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
 ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]no-pie'),)
@@ -174,6 +177,9 @@ endif
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+
+QEMUOPTS += -netdev user,id=net0,hostfwd=udp::$(FWDPORT)-:2000 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
+QEMUOPTS += -device e1000,netdev=net0,bus=pcie.0
 
 qemu: $K/kernel fs.img
 	$(QEMU) $(QEMUOPTS)
