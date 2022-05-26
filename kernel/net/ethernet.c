@@ -37,8 +37,9 @@ void eth_tx(struct mbuf *m, uint16_t ethType) {
 void eth_rx(struct mbuf* m) {
     struct eth_hdr *ethhdr;
     uint16_t ethtype;
+
     ethhdr = (struct eth_hdr*) mbufpull(m, sizeof(struct eth_hdr));
-    printf("running here\n");
+    printf("receive eth packet\n");
 
     if (ethhdr == NULL) {
         printf("fail in eth \n");
@@ -53,4 +54,6 @@ void eth_rx(struct mbuf* m) {
         arp_rx(m);
     else 
         mbuffree(m);
+
+    printf("fininsh ethernet\n");
 }

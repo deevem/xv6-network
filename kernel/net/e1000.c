@@ -29,10 +29,7 @@ void
 e1000_init(uint32 *xregs)
 {
   int i;
-
-  printf("e1000 init begin\n");
-
-
+  
   initlock(&e1000_lock, "e1000");
 
   regs = xregs;
@@ -110,8 +107,6 @@ e1000_transmit(struct mbuf *m)
   // by reading the E1000_TDT control register.
   acquire(&e1000_lock);
 
-
-  printf("this is tx \n");
   uint32 index = regs[E1000_TDT];
   
   // check if the the ring is overflowing. 
@@ -160,6 +155,7 @@ e1000_recv(void)
       
       // deliver to network stack
       rx_mbufs[index]->len = rx_ring[index].length;
+      rx_mbufs[index]->head = rx_mbufs[index]->buf;
       eth_rx(rx_mbufs[index]); 
 
       // allocate a new mbuf using mbufalloc() 
@@ -183,6 +179,7 @@ e1000_intr(void)
   // without this the e1000 won't raise any
   // further interrupts.
   regs[E1000_ICR] = 0xffffffff;
-
+  printf("e1000 interrupt\n");
   e1000_recv();
+  printf("e1000 interrupt handler finish\n");
 }

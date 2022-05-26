@@ -33,7 +33,7 @@ void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip) {
     iphdr->vhl = (4 << 4) | (20 >> 2);
     iphdr->protocol = protocol;
     // TODO: local ip
-    iphdr->src_addr = htonl(MAKE_IP_ADDR(10,1,1,5));
+    iphdr->src_addr = htonl(MAKE_IP_ADDR(10,0,2,15));
     iphdr->dst_addr = htonl(dst_ip);
     iphdr->len = htons(m->len);
     iphdr->ttl = 64;

@@ -92,7 +92,7 @@ int dns_response(char* buf, int recv_len) {
             len += 4;
         }
     }
-    exit(0);
+    printf("dns finished \n");
     // TODO : check recv_len, record
 
     // ..... 
