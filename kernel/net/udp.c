@@ -71,8 +71,7 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
 
     // out test port
     if (dst_port == 12345) {
-        for (int i = 0; i < len; i++)
-           printf("%c", *(m->head + i));
+        printf("%s\n", m->head);
     }
     printf("------\n");
 

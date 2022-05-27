@@ -1,4 +1,5 @@
 #include "arp.h"
+#include "ip.h"
 
 static uint8_t local_mac[ETHADDR_LEN] = { 0x52, 0x54, 0x00, 0x12, 0x34, 0x56 };
 
@@ -8,8 +9,6 @@ void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip){
 
     m = mbufalloc(sizeof(struct eth_hdr) + sizeof(struct arp_hdr));
     hdr = (struct arp_hdr*)mbufpush(m, sizeof(struct arp_hdr));
-    
-    uint32_t local_ip = MAKE_IP_ADDR(10,0,2,15);
 
     hdr->ar_hrd = htons(ARP_HRD_ETHER);
     hdr->ar_pro = htons(ETHTYPE_IP);
@@ -33,7 +32,6 @@ void arp_rx(struct mbuf* mbuffer) {
     struct arp_hdr* hdr;
     uint8_t smac[ETHADDR_LEN];
     
-    uint32_t local_ip = MAKE_IP_ADDR(10,0,2,15);
     hdr = (struct arp_hdr*)mbufpull(mbuffer,sizeof(*hdr));
 
 

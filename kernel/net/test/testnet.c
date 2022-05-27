@@ -38,7 +38,7 @@ void testdns() {
 void testnet() {
 
     send_udp();
-    testdns();
+    // testdns();
     printf("network test finish\n");
 }
 

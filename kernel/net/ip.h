@@ -32,4 +32,6 @@ void ip_rx(struct mbuf *m);
 void ip_tx(struct mbuf *m, uint8_t protocol, uint32_t dst_ip);
 void ip_tx_ready(struct mbuf* m);
 
+#define local_ip MAKE_IP_ADDR(192, 168, 0, 100)
+
 #endif
