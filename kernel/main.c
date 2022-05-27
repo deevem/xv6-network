@@ -3,7 +3,7 @@
 #include "memlayout.h"
 #include "riscv.h"
 #include "defs.h"
-
+#include "./net/socket.h"
 volatile static int started = 0;
 
 // start() jumps here in supervisor mode on all CPUs.
@@ -28,6 +28,14 @@ main()
     iinit();         // inode table
     fileinit();      // file table
     virtio_disk_init(); // emulated hard disk
+
+    // init for network device
+    pci_init();
+    // init socket
+    sockinit();
+    // run net test
+    //testnet();
+
     userinit();      // first user process
     __sync_synchronize();
     started = 1;

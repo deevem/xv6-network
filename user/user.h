@@ -23,6 +23,9 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int connect(uint32, uint32, uint32);
+int connect_icmp(uint32, uint32, uint32);
+int connect_arp(uint32);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -40,3 +43,6 @@ void free(void*);
 int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
+
+// dns.c
+uint32 dns(char *);
