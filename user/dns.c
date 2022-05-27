@@ -1,5 +1,8 @@
 #include "user/dns.h"
 #include "user/user.h"
+
+#define MAKE_IP_ADDR(a, b, c, d) (((uint32_t)a << 24) | ((uint32_t)b << 16) | ((uint32_t)c << 8) | (uint32_t)d)
+
 /*
     from :abcd.efgh.ijk.lmno
     to   :4abcd4eghh3ijk4lmno
@@ -89,8 +92,13 @@ int dns_response(uint8* buf, int recv_len) {
         char* qn = ( char* )(buf + len);
         printf("dns len %d \n", len);
 
+    if((int) qn[0] > 63) {  // compression?
         qn = (char *)(buf+qn[1]);
         len += 2;
+    } else {
+        decode_qname(qn);
+        len += strlen(qn)+1;
+    }
 
         struct dns_data* d = ( struct dns_data* )(buf + len);
         len += sizeof(struct dns_data);
@@ -102,7 +110,10 @@ int dns_response(uint8* buf, int recv_len) {
             printf("DNS arecord for %s is ", qname);
             uint8_t* ip = (uint8_t*)(buf + len);
             printf("%d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
-            ip_receive = (ip[0] << 24) + (ip[1] << 16) + (ip[2] << 8) + ip[3];
+            // ip_receive = ((uint32_t)(ip[0]) << 24) + ((uint32_t)(ip[1]) << 16) + ((uint32_t)(ip[2]) << 8) + ip[3];
+            ip_receive = MAKE_IP_ADDR(ip[0], ip[1], ip[2], ip[3]);
+            // printf("%d.%d.%d.%d\n", (ip_receive >> 24) & ((1 << 8) - 1) , (ip_receive >> 16) & ((1 << 8) - 1), (ip_receive >> 8) & ((1 << 8) - 1),ip_receive & ((1 << 8) - 1));
+            printf("ip_receive: %d\n",ip_receive);
             len += 4;
         }
     }

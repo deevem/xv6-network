@@ -68,6 +68,7 @@ int main(int argc, char **argv)
     }
     else {
         dst = dns(argv[1]);
+        printf("%d",dst);
     }
     
     int id = getpid();
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
     printf("    IP address is:%d.%d.%d.%d\n",(dst >> 24) & 0xff,(dst >> 16) & 0xff,(dst >> 8) & 0xff,dst & 0xff);
     for (int i = 0; i < attempts; i++)
     {
-        sleep(50);
+        sleep(5);
         uint16 header[3];
         header[0] = 0x0800; // icmp type
         header[1] = id; // icmp code

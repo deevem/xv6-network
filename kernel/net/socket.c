@@ -98,9 +98,12 @@ int icmp_sockalloc(struct file ** f, uint32 r_ip, uint8 icmp_type, uint8 icmp_co
     si->next = socks;
     socks = si;
     release(&lock);
+    return 0;
+    
 bad:
     if (si)
         kfree((char*)si);
+    printf("icmp_sockalloc: enter\n");
     if (*f)
         fileclose(*f);
     return -1;
