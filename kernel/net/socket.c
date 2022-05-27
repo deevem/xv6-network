@@ -157,17 +157,22 @@ int sockread(struct socket *si, uint64 addr, int n)
     
     m = mbuf_queue_pophead(&si->rxq);
 
-    printf("out");
+    printf("out\n");
     release(&si->lock);
 
     len = m->len;
     if (len > n)
         len = n;
+    printf("fail here %d %d\n", m->head, m->len);
+
     if (copyout(pr->pagetable, addr, m->head, len) == -1){
         mbuffree(m);
         return -1;
     }
-    mbuffree(m);
+    // mbuffree(m);
+
+    printf("success sock read\n");
+
     return len;
 }
 

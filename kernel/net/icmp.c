@@ -13,6 +13,10 @@ void icmp_incoming(struct mbuf* m) {
         return;
     case ICMP_DST_UNREACHABLE:
         printf("haha ICMP_DST_UNREACHABLE GG");
+        break;
+    case ICMP_REPLY:
+        icmp_rx(m);
+        break;
     default:
         printf("haha GG");
         break;
@@ -54,14 +58,11 @@ void icmp_tx(struct mbuf *m, uint32 dst_ip, uint8 type, uint8 code)
     ip_tx(m, IPPROTO_ICMP, dst_ip);
 }
 
-void icmp_rx(struct mbuf *m, uint16 len, struct ip_hdr *iphdr)
+void icmp_rx(struct mbuf *m)
 {
     struct icmp_hdr * icmphdr = (struct icmp_hdr*) mbufpush(m, sizeof(struct icmp_hdr));
+    struct ip_hdr * iphdr = (struct ip_hdr*) mbufpush(m, sizeof(struct ip_hdr));
     if (!icmphdr)
-        goto fail;
-    
-    len -= sizeof(*icmphdr);
-    if (len > m->len)
         goto fail;
     
     if(checksum((unsigned char*)icmphdr, m->len))
@@ -70,6 +71,8 @@ void icmp_rx(struct mbuf *m, uint16 len, struct ip_hdr *iphdr)
     uint8 ttl = iphdr->ttl;
     uint32 sip = ntohl(iphdr->src_addr);
     sockrecvicmp(m, sip, ttl);
+    printf("this icmp rx\n");
+    return;
 fail:
     mbuffree(m);
 }
