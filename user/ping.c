@@ -74,13 +74,13 @@ int main(int argc, char **argv)
     int icmp_seq = 0, attempts = 4, send_ok = 4, recv_ok = 4;
     uint32 start_time = 0, end_time = 0;
 
+    printf("ping: socket connected\n");
 
     if ((fd = connect_icmp(dst, 8, 0)) < 0)
     {
         printf("ping: connect() failed\n");
         return -1;
     }
-
     char ibuf[128];
     memset(&ibuf, 0, sizeof(ibuf));
     printf("Ping %s ...\n", argv[1]);

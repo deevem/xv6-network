@@ -35,7 +35,7 @@ int udp_sockalloc(struct file **f, uint32 r_ip, uint16 lport, uint16 rport)
     si->lport = lport;
     si->rport = rport;
     initlock(&si->lock, "sock");
-
+    mbuf_queue_init(&si->rxq);
     (*f)->type = FD_SOCK;
     (*f)->readable = 1;
     (*f)->writable = 1;
@@ -150,12 +150,9 @@ int sockread(struct socket *si, uint64 addr, int n)
         return -1;
     }
     
-
-    printf("socket read %d %d \n", &si->rxq.head, &si->rxq.tail);   
-    
     m = mbuf_queue_pophead(&si->rxq);
 
-
+    printf("out");
     release(&si->lock);
 
     len = m->len;

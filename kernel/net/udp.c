@@ -57,6 +57,8 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     dst_port = ntohs(udphdr->dst_port);
     sockrecvudp(m, src_ip, dst_port, src_port);
 
+    return;
+    
     printf("------\n");
     printf("%s %d\n", "src ip", src_ip);
     printf("%s %d\n", "src port", src_port);

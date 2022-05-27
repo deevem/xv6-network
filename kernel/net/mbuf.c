@@ -63,14 +63,20 @@ void mbuffree(struct mbuf *m) {
 // ------------mbuf_queue-------------
 
 void mbuf_queue_pushtail(struct mbuf_queue *q, struct mbuf *m) {
+    m->next = 0;
+    if (!q->head){
+    q->head = q->tail = m;
+    return;
+    }
     q->tail->next = m;
     q->tail = m;
 }
 
 struct mbuf* mbuf_queue_pophead(struct mbuf_queue *q) {
     struct mbuf* tmp = q->head;
-    printf("living %d \n", tmp->next);
-    q->head = q->head->next;
+    if (!tmp)
+        return 0;
+    q->head = tmp->next;
     return tmp;
 }
 
