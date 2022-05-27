@@ -100,8 +100,9 @@ int main(int argc, char **argv)
             send_ok -= 1;
             continue;
         }
-
+        
         int cc = read(fd, ibuf, sizeof(ibuf)-1);
+        printf("ping: success received\n");
         end_time = uptime();
         icmp_seq += 1;
         printf("From %s: icmp_seq=%d time=%dms\n", argv[1], icmp_seq , (end_time - start_time) * 10);

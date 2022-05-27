@@ -79,6 +79,8 @@ int icmp_sockalloc(struct file ** f, uint32 r_ip, uint8 icmp_type, uint8 icmp_co
     si->icmp_type = icmp_type;
     si->icmp_code = icmp_code;
     initlock(&si->lock, "sock");
+    mbuf_queue_init(&si->rxq);
+    
     (*f)->type = FD_SOCK;
     (*f)->readable = 1;
     (*f)->writable = 1;
@@ -99,7 +101,7 @@ int icmp_sockalloc(struct file ** f, uint32 r_ip, uint8 icmp_type, uint8 icmp_co
     socks = si;
     release(&lock);
     return 0;
-    
+
 bad:
     if (si)
         kfree((char*)si);
