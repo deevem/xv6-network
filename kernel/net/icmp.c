@@ -1,6 +1,7 @@
 #include "icmp.h"
 #include "ip.h"
 #include "utils.h"
+#include "socket.h"
 
 void icmp_incoming(struct mbuf* m) {
 
@@ -40,5 +41,35 @@ void icmp_reply(struct mbuf* m) {
 
     ip_tx_ready(m);
 
+    mbuffree(m);
+}
+
+void icmp_tx(struct mbuf *m, uint32 dst_ip, uint8 type, uint8 code)
+{
+    struct icmp_hdr * icmphdr = (struct icmp_hdr*) mbufpush(m, sizeof(struct icmp_hdr));
+    icmphdr->type = type;
+    icmphdr->code = code;
+    icmphdr->cksum = checksum((unsigned char*)icmphdr, m->len);
+
+    ip_tx(m, IPPROTO_ICMP, dst_ip);
+}
+
+void icmp_rx(struct mbuf *m, uint16 len, struct ip_hdr *iphdr)
+{
+    struct icmp_hdr * icmphdr = (struct icmp_hdr*) mbufpush(m, sizeof(struct icmp_hdr));
+    if (!icmphdr)
+        goto fail;
+    
+    len -= sizeof(*icmphdr);
+    if (len > m->len)
+        goto fail;
+    
+    if(checksum((unsigned char*)icmphdr, m->len))
+        panic("wrong checksum");
+    
+    uint8 ttl = iphdr->ttl;
+    uint32 sip = ntohl(iphdr->src_addr);
+    sockrecvicmp(m, sip, ttl);
+fail:
     mbuffree(m);
 }

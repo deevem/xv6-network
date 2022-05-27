@@ -1,6 +1,29 @@
 #ifndef DNS
 #define DNS
-#include "sysheaders.h"
+#include "../kernel/types.h"
+#include "../kernel/param.h"
+#include "../kernel/riscv.h"
+static inline uint16 bswaps(uint16 val)
+{
+  return (((val & 0x00ffU) << 8) |
+          ((val & 0xff00U) >> 8));
+}
+
+static inline uint32 bswapl(uint32 val)
+{
+  return (((val & 0x000000ffUL) << 24) |
+          ((val & 0x0000ff00UL) << 8) |
+          ((val & 0x00ff0000UL) >> 8) |
+          ((val & 0xff000000UL) >> 24));
+}
+
+#define ntohs bswaps
+#define ntohl bswapl
+#define htons bswaps
+#define htonl bswapl
+
+#define NULL 0
+
 
 struct dns_hdr {
   uint16_t id;  // request ID
@@ -38,7 +61,9 @@ struct dns_data {
 } __attribute__((packed));
 
 
-int dns_request(char* buf, const char* host);
-int dns_response(char* buf, int recv_len);
+int dns_request(uint8* buf, const char* host);
+int dns_response(uint8* buf, int recv_len);
+
+uint32 dns(char* ss);
 
 #endif

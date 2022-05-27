@@ -16,5 +16,6 @@ struct icmp_hdr {
 
 void icmp_incoming(struct mbuf* m);
 void icmp_reply(struct mbuf* m);
+void icmp_tx(struct mbuf* m,  uint32 dst_ip, uint8 type, uint8 code);
 
 #endif

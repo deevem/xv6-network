@@ -8,6 +8,7 @@ void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip){
     struct mbuf* m;
 
     m = mbufalloc(sizeof(struct eth_hdr) + sizeof(struct arp_hdr));
+    
     hdr = (struct arp_hdr*)mbufpush(m, sizeof(struct arp_hdr));
 
     hdr->ar_hrd = htons(ARP_HRD_ETHER);

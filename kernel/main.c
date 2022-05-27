@@ -3,7 +3,7 @@
 #include "memlayout.h"
 #include "riscv.h"
 #include "defs.h"
-
+#include "./net/socket.h"
 volatile static int started = 0;
 
 // start() jumps here in supervisor mode on all CPUs.
@@ -31,9 +31,10 @@ main()
 
     // init for network device
     pci_init();
-
+    // init socket
+    sockinit();
     // run net test
-    testnet();
+    //testnet();
 
     userinit();      // first user process
     __sync_synchronize();

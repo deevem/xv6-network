@@ -69,6 +69,7 @@ void mbuf_queue_pushtail(struct mbuf_queue *q, struct mbuf *m) {
 
 struct mbuf* mbuf_queue_pophead(struct mbuf_queue *q) {
     struct mbuf* tmp = q->head;
+    printf("living %d \n", tmp->next);
     q->head = q->head->next;
     return tmp;
 }

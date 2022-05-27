@@ -3,7 +3,7 @@
 #include "sysheaders.h"
 
 #define MBUF_SIZE 4096
-
+#define MBUF_DEFAULT_HEADROOM  128
 struct mbuf {
     struct mbuf* next;
     char*        head;

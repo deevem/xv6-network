@@ -15,7 +15,9 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
-
+#include "./net/socket.h"
+#include "./net/ip.h"
+#include "./net/arp.h"
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -482,5 +484,63 @@ sys_pipe(void)
     fileclose(wf);
     return -1;
   }
+  return 0;
+}
+
+uint64
+sys_connect(void)
+{
+  struct file *f;
+  int fd;
+  uint32 dst_ip;
+  uint32 src_port;
+  uint32 dst_port;
+
+  if (argint(0, (int*)&dst_ip) < 0 ||
+      argint(1, (int*)&src_port) < 0 ||
+      argint(2, (int*)&dst_port) < 0){
+        return -1;
+      }
+  if (udp_sockalloc(&f, dst_ip, src_port, dst_port) < 0)
+    return -1;
+  if ((fd = fdalloc(f)) < 0){
+    fileclose(f);
+    return -1;
+  }
+
+  return fd;
+}
+
+uint64 sys_connect_icmp(void)
+{
+  struct file *f;
+  int fd;
+  uint32 dst_ip;
+  uint32 type;
+  uint32 code;
+
+  if (argint(0, (int*)&dst_ip) < 0 ||
+      argint(1, (int*)&type) < 0 ||
+      argint(2, (int*)&code) < 0){
+        return -1;
+      }
+  if (icmp_sockalloc(&f, dst_ip, (uint8)type, (uint8)code) < 0)
+    return -1;
+  if ((fd = fdalloc(f)) < 0){
+    fileclose(f);
+    return -1;
+  }
+
+  return fd;
+}
+
+uint64 sys_connect_arp(void)
+{
+  uint32 dst_ip;
+
+  if (argint(0, (int*)&dst_ip) < 0)
+    return -1;
+  uint8 broadcast_mac[ETHADDR_LEN] = { 0xFF, 0XFF, 0XFF, 0XFF, 0XFF, 0XFF };
+  arp_tx(ARP_OP_REQUEST, broadcast_mac, dst_ip);
   return 0;
 }
