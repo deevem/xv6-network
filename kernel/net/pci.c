@@ -34,7 +34,6 @@ pci_init()
     uint32 id = base[0];
     
     // 100e:8086 is an e1000
-    printf("pci init called %d %d\n", id, 0x100e8086);
 
     if(id == 0x100e8086){
       

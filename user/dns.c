@@ -133,15 +133,13 @@ int dns_response(uint8* buf, int recv_len) {
 
 uint32 dns(char* ss)
 {
-    printf("input %s\n", ss);
     char s[100];
     memset(s, 0, sizeof(s));
     memmove(s, ss, strlen(ss));
-    printf("input %s\n", s);
+    
     s[strlen(s) + 1] = '\0';
     s[strlen(s)] = '.';
     
-    printf("input %s\n", s);
     #define N 1000
     uint8 obuf[N];
     uint8 ibuf[N];

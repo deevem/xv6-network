@@ -105,7 +105,6 @@ int icmp_sockalloc(struct file ** f, uint32 r_ip, uint8 icmp_type, uint8 icmp_co
 bad:
     if (si)
         kfree((char*)si);
-    printf("icmp_sockalloc: enter\n");
     if (*f)
         fileclose(*f);
     return -1;
@@ -157,21 +156,17 @@ int sockread(struct socket *si, uint64 addr, int n)
     
     m = mbuf_queue_pophead(&si->rxq);
 
-    printf("out\n");
     release(&si->lock);
 
     len = m->len;
     if (len > n)
         len = n;
-    printf("fail here %d %d\n", m->head, m->len);
 
     if (copyout(pr->pagetable, addr, m->head, len) == -1){
         mbuffree(m);
         return -1;
     }
     // mbuffree(m);
-
-    printf("success sock read\n");
 
     return len;
 }
@@ -191,7 +186,6 @@ int sockwrite(struct socket *si, uint64 addr, int n)
     }
     if (si->protocol_type == IPPROTO_UDP) {
         udp_tx(m, si->r_ip, si->lport, si->rport);
-        printf("udp sent socket success\n");
     }
     else if (si->protocol_type == IPPROTO_ICMP)
         icmp_tx(m, si->r_ip, si->icmp_type, si->icmp_code);

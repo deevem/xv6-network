@@ -20,18 +20,11 @@ void eth_tx(struct mbuf *m, uint16_t ethType) {
     }
     ethhdr->type = htons(ethType);
 
-    printf("%s \n", "ethernet tx ready");
-    printf("%s %d\n", "len of buf", m->len);
-    printf("%s %d\n", "head", m->head - m->buf);
 
-    struct ip_hdr *iphdr;
-    iphdr = (struct ip_hdr*)(m->buf + 14);
-    printf("%s %d\n", "ttl test", iphdr->ttl);
-    
-    int n = e1000_transmit(m);
+
+    e1000_transmit(m);
 
     mbuffree(m);
-    printf("%s %d\n", "finished net write", n);
 }
 
 void eth_rx(struct mbuf* m) {
@@ -39,14 +32,13 @@ void eth_rx(struct mbuf* m) {
     uint16_t ethtype;
 
     ethhdr = (struct eth_hdr*) mbufpull(m, sizeof(struct eth_hdr));
-    printf("receive eth packet\n");
 
     if (ethhdr == NULL) {
         printf("fail in eth \n");
         return;
     }
     ethtype = ntohs(ethhdr->type);
-    printf("%s %d\n", "ethtype", ethtype);
+
 
     if (ethtype == ETHTYPE_IP)
         ip_rx(m);
@@ -55,5 +47,4 @@ void eth_rx(struct mbuf* m) {
     else 
         mbuffree(m);
 
-    printf("fininsh ethernet\n");
 }

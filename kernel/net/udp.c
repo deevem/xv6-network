@@ -8,7 +8,6 @@ void udp_tx(struct mbuf *m, uint32_t dst_ip, uint16_t src_port, uint16_t dst_por
     struct udp_hdr *udphdr;
 
     udphdr = (struct udp_hdr*)mbufpush(m, sizeof(struct udp_hdr));
-    printf("%s", "mbufpush finished in udp tx\n");
 
     memset(udphdr, 0, sizeof(struct udp_hdr));
     udphdr->src_port = htons(src_port);
@@ -25,10 +24,6 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     struct udp_hdr *udphdr;
     uint32_t src_ip;
     uint16_t src_port, dst_port;
-
-    // get udp hdr from m
-
-    printf("this is udp rx !! \n");
 
     udphdr = (struct udp_hdr *)mbufpull(m, sizeof(struct udp_hdr));
     if (udphdr == NULL) {
@@ -56,22 +51,6 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     src_port = ntohs(udphdr->src_port);
     dst_port = ntohs(udphdr->dst_port);
     sockrecvudp(m, src_ip, dst_port, src_port);
-
-    return;
-    
-    printf("------\n");
-    printf("%s %d\n", "src ip", src_ip);
-    printf("%s %d\n", "src port", src_port);
-    printf("%s %d %d\n", "dst port", dst_port, udphdr->dst_port);
-
-    // out test port
-    if (dst_port == 12345) {
-        printf("%s\n", m->head);
-    }
-    printf("------\n");
-
-    mbuffree(m);
-    // recieve the udp packet by the socket
 
 fail:
     return;

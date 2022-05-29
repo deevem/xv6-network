@@ -28,8 +28,6 @@ void arp_tx(uint16_t op, uint8_t desmac[ETHADDR_LEN], uint32_t tip){
 
 void arp_rx(struct mbuf* mbuffer) {
 
-    printf("arp packet recv \n");
-
     struct arp_hdr* hdr;
     uint8_t smac[ETHADDR_LEN];
     
@@ -56,7 +54,6 @@ void arp_rx(struct mbuf* mbuffer) {
 
     memmove(smac,hdr->arp_sha,ETHADDR_LEN);
 
-    printf("ready to send arp\n");
     arp_tx(ARP_OP_REPLY,smac, ntohl(hdr->arp_sip));
 fin:
     mbuffree(mbuffer);
