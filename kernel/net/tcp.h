@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "spinlock.h"
 #include "sysheaders.h"
 #include "mbuf.h"
 #include "list.h"
@@ -70,6 +71,7 @@ struct tcp_sock {
     uint32_t state;
     struct tcb tcb;
 
+    struct spinlock spinlk;
 };
 
 void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr);

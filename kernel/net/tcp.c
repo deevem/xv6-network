@@ -6,7 +6,11 @@ struct tcp_sock * tcp_sock_lookup_establish(uint32_t src, uint32_t dst, uint16_t
 
 }
 
-void tcp_sock_lookup(uint32_t src, uint32_t dst, uint16_t src_port, uint16_t dst_port) {
+struct tcp_sock * tcp_sock_lookup_listen(uint32_t dst, uint16_t dst_port) {
+
+}
+
+struct tcp_sock * tcp_sock_lookup(uint32_t src, uint32_t dst, uint16_t src_port, uint16_t dst_port) {
     struct tcp_sock *tcpsock = NULL;
     tcpsock = tcp_sock_lookup_establish(src, dst, src_port, dst_port);
     if (tcpsock == NULL) 
@@ -22,7 +26,7 @@ void tcp_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, ui
     tcphdr->ack_seq = htonl(tcpsock->tcb.recv_next);
     tcphdr->reserved = htons(0);
     tcphdr->window = htons(tcpsock->tcb.recv_window);
-    tcphdr->checksum = checksum(m, m->len);
+    tcphdr->checksum = tcp_checksum(m, tcphdr->src_port, tcphdr->dst_port);
     tcphdr->urg = htons(0);
 
     ip_tx(m, IPPROTO_TCP, tcpsock->dst_addr);
@@ -35,7 +39,32 @@ void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr) {
     if (tcphdr->data_offset > TCP_MIN_DATA_OFF) 
         mbufpull(m, 4 * (tcphdr->data_offset - TCP_MIN_DATA_OFF));
 
+    tcphdr->src_port = ntohs(tcphdr->src_port);
+    tcphdr->dst_port = ntohs(tcphdr->dst_port);
+    tcphdr->seq = ntohl(tcphdr->seq);
+    tcphdr->ack_seq = ntohl(tcphdr->ack_seq);
+    tcphdr->window = ntohs(tcphdr->window);
+    tcphdr->checksum = ntohs(tcphdr->checksum);
+    tcphdr->urg = ntohs(tcphdr->urg);
     
+    uint32_t src = ntohl(iphdr->src_addr);
+    uint32_t dst = ntohl(iphdr->dst_addr);
+
+    m->start_seq = tcphdr->seq;
+    m->end_seq = tcphdr->seq + m->len;
+
+    struct tcp_sock *tcpsock = tcp_sock_lookup(src, dst, tcphdr->src_port, tcphdr->dst_port);
+
+    if (tcpsock == NULL) {
+        mbuffree(m);
+        return;
+    }
+
+    acquire(&tcpsock->spinlk);
+    int r = 0; // to do
+    if (r != 0) 
+        release(&tcpsock->spinlk);
+
 }
 
 
