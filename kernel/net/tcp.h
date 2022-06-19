@@ -8,6 +8,10 @@
 #define TCP_HDR_LEN sizeof(struct tcp_hdr)
 #define TCP_DOFFSET sizeof(struct tcp_hdr) / 4
 
+#define TCP_DEFAULT_WINDOW	40960
+#define TCP_MAX_BACKLOG		128
+#define TCP_DEFALUT_MSS     512
+
 struct tcp_hdr {
     uint16_t src_port;
     uint16_t dst_port;
@@ -67,17 +71,17 @@ struct tcp_sock {
 };
 
 void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr);
-void tcp_tx(struct tcp_sock *ts, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq);
+void tcp_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq);
 
 // functions for send
 // special packets
-void tcp_send_reset(struct tcp_sock *ts);
-void tcp_send_syn(struct tcp_sock *ts);
-void tcp_send_fin(struct tcp_sock *ts);
-void tcp_send_ack(struct tcp_sock *ts);
-void tcp_send_synack(struct tcp_sock *ts);
+void tcp_send_reset(struct tcp_sock *tcpsock);
+void tcp_send_syn(struct tcp_sock *tcpsock);
+void tcp_send_fin(struct tcp_sock *tcpsock);
+void tcp_send_ack(struct tcp_sock *tcpsock);
+void tcp_send_synack(struct tcp_sock *tcpsock);
 // main data tx function
-int tcp_send(struct tcp_sock *ts, char *buffer, int len);
+int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len);
 
 
 // functions for rx
