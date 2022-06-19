@@ -7,14 +7,15 @@
 
 char* strcat(char* str1, char* str2)
 {
-  char * result = (char *) malloc(strlen(str1) +  strlen(str2));
+  char * result = (char *) malloc(strlen(str1) +  strlen(str2) + 1);
   for (int i = 0; i < strlen(str1); i++)
   {
     result[i] = str1[i];
   }
+  result[strlen(str1)] = ' ';
   for (int i = 0; i < strlen(str2); i++)
   {
-    result[strlen(str1) + i] = str2[i];
+    result[strlen(str1) + 1 + i] = str2[i];
   }
   return result;
 }
@@ -32,13 +33,15 @@ int main(int argc, char**argv){
         exit(1);
     }
 
-    char * output = strcat("add_group ", argv[1]);
+    char * output = strcat("add_group", argv[1]);
     int fd = connect(MAKE_IP_ADDR(183,172,152,232), 12345, 54321); // the ip of serve is hard code, may change it future
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
+        free(output);
         exit(1);
     } else {
         printf("packet sent\n");
     }
+    free(output);
     exit(0);
 }

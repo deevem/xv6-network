@@ -140,6 +140,7 @@ UPROGS=\
 	$U/_sendudp\
 	$U/_new_group\
 	$U/_add_group\
+	$U/_send\
 	$U/_forktest\
 	$U/_grep\
 	$U/_init\

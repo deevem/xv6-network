@@ -5,27 +5,21 @@
 
 #define MAKE_IP_ADDR(a, b, c, d) (((uint32_t)a << 24) | ((uint32_t)b << 16) | ((uint32_t)c << 8) | (uint32_t)d)
 
-char* strcat(char* str1, char* str2, char* str3, char* str4)
+char* strcat(char* str1, char* str2)
 {
-  char * result = (char *) malloc(strlen(str1) +  strlen(str2));
+  char * result = (char *) malloc(strlen(str1) +  strlen(str2) + 1);
   for (int i = 0; i < strlen(str1); i++)
   {
     result[i] = str1[i];
   }
+  result[strlen(str1)] = ' ';
   for (int i = 0; i < strlen(str2); i++)
   {
-    result[strlen(str1) + i] = str2[i];
-  }
-  for (int i = 0; i < strlen(str2); i++)
-  {
-    result[strlen(str1) + strlen(str2) + i] = str3[i];
-  }
-  for (int i = 0; i < strlen(str2); i++)
-  {
-    result[strlen(str1) + strlen(str2) + strlen(str3) + i] = str4[i];
+    result[strlen(str1) + 1 + i] = str2[i];
   }
   return result;
 }
+
 
 int main(int argc, char**argv){
     if (argc <= 2)
@@ -40,19 +34,35 @@ int main(int argc, char**argv){
         exit(1);
     }
 
-    if (strlen(argv[2]) > 100)
+    int n = argc - 2;
+    int num = 0;
+    for (int i = 0; i < n; i++)
+    {
+      num += strlen(argv[i+2]);
+    }
+
+    if (num > 100)
     {
         printf("the message should not larger than 100 chars");
         exit(1);
     }
+    char * first = argv[0];
+    char * output = first;
+    for (int i = 0; i < argc - 1; i++)
+    {
+      output = strcat(first, argv[i + 1]);
+      free(first);
+      first = output;
+    }
 
-    char * output = strcat("send ", argv[1], " ", argv[2]);
     int fd = connect(MAKE_IP_ADDR(183,172,152,232), 12345, 54321); // the ip of serve is hard code, may change it future
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
+        free(output);
         exit(1);
     } else {
         printf("packet sent\n");
     }
+    free(output);
     exit(0);
 }
