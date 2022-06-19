@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "ip.h"
 
 uint16_t checksum(const unsigned char* addr, int len) {
 
@@ -24,4 +25,14 @@ uint16_t checksum(const unsigned char* addr, int len) {
 
     return answer;
 
+}
+
+uint32 tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr){
+    uint32 sum = 0;
+    sum += saddr;
+    sum += daddr;
+    sum += htons(IPPROTO_TCP);
+    sum += htons(m->len);
+    sum += checksum(m->head,m->len)
+    return sum;
 }
