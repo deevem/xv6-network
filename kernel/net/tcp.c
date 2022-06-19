@@ -50,6 +50,18 @@ void tcp_send_ack(struct tcp_sock *tcpsock) {
     tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
 }
 
+void tcp_send_fin(struct tcp_sock *tcpsock) {
+    if (tcpsock->state == TCP_CLOSE)
+        return;
+
+    struct mbuf *m = mbufalloc(MBUF_DEFAULT_HEADROOM);
+    struct tcp_hdr *tcphdr = (struct tcp_hdr *)mbufpush(m, sizeof(struct tcp_hdr));
+    tcphdr->ack = 1;
+    tcphdr->fin = 1;
+    
+    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
+}
+
 int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len) {
     int rest_len = len;
     
