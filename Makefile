@@ -136,6 +136,7 @@ UPROGS=\
 	$U/_echo\
 	$U/_ping\
 	$U/_nslookup\
+	$U/_sendudp\
 	$U/_forktest\
 	$U/_grep\
 	$U/_init\
@@ -181,7 +182,7 @@ QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nogr
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-QEMUOPTS += -netdev user,id=net0,hostfwd=udp::$(FWDPORT)-:2000 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
+QEMUOPTS += -netdev user,id=net0,hostfwd=udp::12345-:2000 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
 # QEMUOPTS += -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -object filter-dump,id=net0,netdev=net0,file=packets.pcap
 QEMUOPTS += -device e1000,netdev=net0,bus=pcie.0
 

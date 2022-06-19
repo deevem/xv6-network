@@ -179,7 +179,5 @@ e1000_intr(void)
   // without this the e1000 won't raise any
   // further interrupts.
   regs[E1000_ICR] = 0xffffffff;
-  printf("e1000 interrupt\n");
   e1000_recv();
-  printf("e1000 interrupt handler finish\n");
 }
