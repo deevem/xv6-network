@@ -73,6 +73,14 @@ void tcp_send_ack(struct tcp_sock *tcpsock) {
     tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
 }
 
+void tcp_send_reset(struct tcp_sock *tcpsock){
+    struct mbuf *m = mbufalloc(MBUF_DEFAULT_HEADROOM);
+    struct tcp_hdr *tcphdr = (struct tcp_hdr *)mbufpush(m, sizeof(struct tcp_hdr));
+    tcphdr->rst = 1;
+    tcpsock->tcb.send_unack = tcpsock->tcb.send_next; 
+
+    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
+}
 void tcp_send_fin(struct tcp_sock *tcpsock) {
     if (tcpsock->state == TCP_CLOSE)
         return;
