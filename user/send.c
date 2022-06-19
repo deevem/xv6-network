@@ -17,6 +17,7 @@ char* strcat(char* str1, char* str2)
   {
     result[strlen(str1) + 1 + i] = str2[i];
   }
+  result[strlen(str1) + strlen(str2) + 1] = '\0';
   return result;
 }
 
@@ -51,10 +52,13 @@ int main(int argc, char**argv){
     for (int i = 0; i < argc - 1; i++)
     {
       output = strcat(first, argv[i + 1]);
-      free(first);
+      if (i > 0)
+        {
+          free(first);
+        }
       first = output;
+      
     }
-
     int fd = connect(MAKE_IP_ADDR(183,172,152,232), 12345, 54321); // the ip of serve is hard code, may change it future
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
