@@ -2,7 +2,7 @@
 #define MBUF
 #include "sysheaders.h"
 
-#define MBUF_SIZE 512
+#define MBUF_SIZE 256
 #define MBUF_DEFAULT_HEADROOM  128
 struct mbuf {
     struct mbuf* next;

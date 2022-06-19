@@ -90,34 +90,27 @@ int dns_response(uint8* buf, int recv_len) {
     // answer section
     for (int i = 0; i < ntohs(dnshdr->ancount); i++) {
         char* qn = ( char* )(buf + len);
-        printf("dns len %d \n", len);
 
-    if((int) qn[0] > 63) {  // compression?
-        qn = (char *)(buf+qn[1]);
-        len += 2;
-    } else {
-        decode_qname(qn);
-        len += strlen(qn)+1;
-    }
+        if((int) qn[0] > 63) {
+            qn = (char *)(buf+qn[1]);
+            len += 2;
+        } else {
+            decode_qname(qn);
+            len += strlen(qn)+1;
+        }
 
         struct dns_data* d = ( struct dns_data* )(buf + len);
         len += sizeof(struct dns_data);
 
-        printf("d type %d\n", ntohs(d->type));
-
         if (ntohs(d->type) == ARECORD && ntohs(d->len) == 4) {
             record = 1;
-            printf("DNS arecord for %s is ", qname);
             uint8_t* ip = (uint8_t*)(buf + len);
             printf("%d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
             // ip_receive = ((uint32_t)(ip[0]) << 24) + ((uint32_t)(ip[1]) << 16) + ((uint32_t)(ip[2]) << 8) + ip[3];
             ip_receive = MAKE_IP_ADDR(ip[0], ip[1], ip[2], ip[3]);
-            // printf("%d.%d.%d.%d\n", (ip_receive >> 24) & ((1 << 8) - 1) , (ip_receive >> 16) & ((1 << 8) - 1), (ip_receive >> 8) & ((1 << 8) - 1),ip_receive & ((1 << 8) - 1));
-            printf("ip_receive: %d\n",ip_receive);
             len += 4;
         }
     }
-    printf("dns finished \n");
 
     if(len != recv_len) {
         printf("Processed %d data bytes but received %d\n", len, recv_len);
@@ -140,7 +133,7 @@ uint32 dns(char* ss)
     s[strlen(s) + 1] = '\0';
     s[strlen(s)] = '.';
     
-    #define N 1000
+    #define N 200
     uint8 obuf[N];
     uint8 ibuf[N];
     uint32 dst;
@@ -166,7 +159,7 @@ uint32 dns(char* ss)
 
     
     int cc = read(fd, ibuf, sizeof(ibuf));
-    printf("waiting for dns response\n");
+
     if (cc < 0)
     {
         printf( "dns: recv() failed\n");

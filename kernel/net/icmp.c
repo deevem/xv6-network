@@ -27,7 +27,6 @@ void icmp_incoming(struct mbuf* m) {
 }
 
 void icmp_reply(struct mbuf* m) {
-    printf("running\n");
     struct icmp_hdr* icmphdr = (struct icmp_hdr*)mbufpush(m, sizeof(struct icmp_hdr));
     int tmp = m->len;
     struct ip_hdr *iphdr = (struct ip_hdr *)((char*)icmphdr - sizeof(struct ip_hdr));
@@ -71,7 +70,9 @@ void icmp_rx(struct mbuf *m)
     uint8 ttl = iphdr->ttl;
     uint32 sip = ntohl(iphdr->src_addr);
     sockrecvicmp(m, sip, ttl);
-    printf("this icmp rx\n");
+
+    printf(""); // Warning: do not delete it and do not ask why...
+    
     return;
 fail:
     mbuffree(m);

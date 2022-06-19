@@ -526,7 +526,6 @@ uint64 sys_connect_icmp(void)
       }
   if (icmp_sockalloc(&f, dst_ip, (uint8)type, (uint8)code) < 0)
     return -1;
-  printf("enter\n");
   if ((fd = fdalloc(f)) < 0){
     fileclose(f);
     return -1;

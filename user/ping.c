@@ -63,12 +63,11 @@ int main(int argc, char **argv)
 
     uint32 dst;
     
-    if(judge_ip(argv[1])){ // ipp address
+    if(judge_ip(argv[1])){ // ip address
         dst = ip2int(argv[1]);
     }
     else {
         dst = dns(argv[1]);
-        printf("%d",dst);
     }
     
     int id = getpid();
