@@ -33,6 +33,6 @@ uint32 tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr){
     sum += daddr;
     sum += htons(IPPROTO_TCP);
     sum += htons(m->len);
-    sum += checksum(m->head,m->len)
+    sum += checksum(m->head,m->len);
     return sum;
 }
