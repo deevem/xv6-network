@@ -5,6 +5,8 @@
 #include "list.h"
 #include "ip.h"
 
+#define TCP_MIN_DATA_OFF 5
+
 #define TCP_HDR_LEN sizeof(struct tcp_hdr)
 #define TCP_DOFFSET sizeof(struct tcp_hdr) / 4
 
@@ -84,4 +86,9 @@ void tcp_send_synack(struct tcp_sock *tcpsock);
 int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len);
 
 
+// for tcp socket control
+void tcp_set_state(struct tcp_sock *tcpsock, enum tcp_states state);
+void tcp_done(struct tcp_sock *tcpsock);
+
 // functions for rx
+

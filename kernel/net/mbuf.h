@@ -1,7 +1,7 @@
 #ifndef MBUF
 #define MBUF
 #include "sysheaders.h"
-
+#include "list.h"
 #define MBUF_SIZE 256
 #define MBUF_DEFAULT_HEADROOM  128
 struct mbuf {
@@ -9,6 +9,12 @@ struct mbuf {
     char*        head;
     uint8_t      len;
     char         buf[MBUF_SIZE];
+
+    // for tcp items
+    int refcnt;
+    uint32_t start_seq;
+    uint32_t end_seq;
+    struct list_head list;
 };
 
 // add len to the header size
@@ -43,5 +49,26 @@ void mbuf_queue_pushtail(struct mbuf_queue *q, struct mbuf *m);
 struct mbuf* mbuf_queue_pophead(struct mbuf_queue *q);
 int mbuf_queue_empty(struct mbuf_queue *q);
 void mbuf_queue_init(struct mbuf_queue *q);
+
+struct tcp_mbuf_queue {
+    struct list_head head;
+    uint32 len;
+};
+
+uint32_t tcp_mbuf_queue_len(const struct tcp_mbuf_queue *q) {
+    return q->len;
+}
+
+void tcp_mbuf_queue_init(struct tcp_mbuf_queue *q) {
+    list_init(&q->head);
+}
+
+void tcp_mbuf_queue_add(struct tcp_mbuf_queue* q, struct mbuf* item, struct mbuf* next) {
+    list_add_tail(&item->list, &next->list);
+}
+
+void tcp_mbuf_enqueue(struct tcp_mbuf_queue* q, struct mbuf* item) {
+    list_add_tail(&item->list, &q->head);
+}
 
 #endif
