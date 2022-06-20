@@ -136,11 +136,10 @@ UPROGS=\
 	$U/_echo\
 	$U/_ping\
 	$U/_nslookup\
-	$U/_recvudp\
-	$U/_sendudp\
 	$U/_new_group\
 	$U/_add_group\
 	$U/_send\
+	$U/_record\
 	$U/_forktest\
 	$U/_grep\
 	$U/_init\

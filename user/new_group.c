@@ -47,11 +47,11 @@ int main(int argc, char**argv)
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
         free(output);
+        close(fd);
         exit(1);
-    } else {
-        printf("packet sent\n");
     }
     free(output);
+    close(fd);
     exit(0);
 
 }

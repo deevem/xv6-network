@@ -41,9 +41,21 @@ int main(int argc, char**argv)
         printf("udp tx failed\n");
         free(output);
         exit(1);
-    } else {
-        printf("packet sent\n");
     }
     free(output);
+    close(fd);
+    char ibuf[256];
+    memset(&ibuf, 0, sizeof(ibuf));
+    int fd2 = connect(MAKE_IP_ADDR(SERVER_IP1, SERVER_IP2, SERVER_IP3, SERVER_IP4), 2000, 54321);
+
+    int cc = read(fd2, ibuf, sizeof(ibuf)-1);
+    if (cc < 0)
+    {
+        printf("record: recv() failed\n");
+        close(fd2);
+        exit(1);
+    }
+    printf("%s", ibuf);
+    close(fd2);
     exit(0);
 }
