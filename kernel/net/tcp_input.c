@@ -75,3 +75,60 @@ int tcp_closed(struct mbuf *m) {
     mbuffree(m);
     return 0;
 }
+
+int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+    if (tcphdr->fin == 1) {
+        tcp_set_state(tcpsock, TCP_CLOSE_WAIT);
+        tcp_send_ack(tcpsock);
+    } else {
+        // TODO: update window
+    }
+    return 0;
+}
+
+int tcp_lastack(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+    if (tcphdr->ack == 1) {
+        tcp_send_fin(tcpsock);
+        tcp_set_state(tcpsock, TCP_CLOSE);
+    }
+    return 0;
+}
+
+int tcp_finwait1(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+    if (tcphdr->ack == 1) {
+        tcp_set_state(tcpsock, TCP_FIN_WAIT_2);
+    }
+    return 0;
+}
+
+int tcp_finwait2(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+    if (tcphdr->fin == 1) {
+        tcp_send_ack(tcpsock);
+        tcp_set_state(tcpsock, TCP_CLOSE);
+    }
+    return 0;
+}
+
+int tcp_input_state(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct ip_hdr *iphdr, struct mbuf *m) {
+
+    switch (tcpsock->state) {
+        case TCP_CLOSE:
+            return tcp_closed(m);
+        case TCP_LISTEN:
+            return tcp_listen(tcpsock, tcphdr, iphdr, m);
+        case TCP_SYN_SENT:
+            return tcp_synsent(tcpsock, tcphdr, iphdr, m);
+        case TCP_SYN_RECEIVED:
+            return tcp_synrecv(tcpsock);
+        case TCP_ESTABLISHED:
+            return tcp_established(tcpsock, tcphdr);
+        case TCP_LAST_ACK:
+            return tcp_lastack(tcpsock, tcphdr);
+        case TCP_FIN_WAIT_1:
+            return tcp_finwait1(tcpsock, tcphdr);
+        case TCP_FIN_WAIT_2:
+            return tcp_finwait2(tcpsock, tcphdr);
+    } 
+    
+    return 0;
+}
