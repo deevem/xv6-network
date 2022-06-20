@@ -88,7 +88,7 @@ struct tcp_sock {
     struct tcp_mbuf_queue write_queue;
 
     struct tcp_sock *parent;
-    
+
     struct spinlock spinlk;
 };
 
@@ -122,3 +122,6 @@ struct spinlock tcpsocks_list_lk;
 
 // implementations for tcp socket
 struct tcp_sock *tcp_sock_alloc();
+
+int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m);
+int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len);
