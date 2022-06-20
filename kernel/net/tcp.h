@@ -83,7 +83,12 @@ struct tcp_sock {
     struct list_head accept_queue;
     struct list_head list;
 
+    struct tcp_mbuf_queue ofo_queue;
+    struct tcp_mbuf_queue rcv_queue;
+    struct tcp_mbuf_queue write_queue;
+
     struct tcp_sock *parent;
+    
     struct spinlock spinlk;
 };
 
