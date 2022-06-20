@@ -150,7 +150,9 @@ void tcp_set_state(struct tcp_sock *tcpsock, enum tcp_states state) {
 }
 
 void tcp_free(struct tcp_sock *tcpsock) {
-
+    acquire(&tcpsocks_list_lk);
+    list_del(&tcpsock->tcpsock_list);
+    release(&tcpsocks_list_lk);
 }
 
 void tcp_sock_free(struct tcp_sock *tcpsock) {

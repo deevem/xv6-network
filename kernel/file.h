@@ -1,5 +1,5 @@
 struct file {
-  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE, FD_SOCK } type;
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE, FD_SOCK, FD_SOCK_TCP } type;
   int ref; // reference count
   char readable;
   char writable;
@@ -8,6 +8,7 @@ struct file {
   uint off;          // FD_INODE
   short major;       // FD_DEVICE
   struct socket* sock;
+  struct tcp_sock* tcpsock;
 };
 
 #define major(dev)  ((dev) >> 16 & 0xFFFF)
