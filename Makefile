@@ -12,7 +12,9 @@ NETOBJS = \
 	kernel/net/utils.o \
 	kernel/net/e1000.o \
 	kernel/net/pci.o \
-	kernel/net/socket.o
+	kernel/net/socket.o \
+	kernel/net/tcp.o \
+	kernel/net/tcp_socket.o
 	
 OBJS = \
   $K/entry.o \
@@ -182,7 +184,7 @@ QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nogr
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-QEMUOPTS += -netdev user,id=net0,hostfwd=udp::12345-:2000 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
+QEMUOPTS += -netdev user,id=net0,hostfwd=udp::12345-:2000,hostfwd=tcp::2222-:2222 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
 # QEMUOPTS += -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -object filter-dump,id=net0,netdev=net0,file=packets.pcap
 QEMUOPTS += -device e1000,netdev=net0,bus=pcie.0
 

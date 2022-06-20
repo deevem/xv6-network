@@ -58,3 +58,7 @@ uint16_t tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr){
 
     return answer;
 }
+
+int min(int a, int b) {
+    return a < b ? a : b;
+}

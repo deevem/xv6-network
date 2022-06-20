@@ -39,3 +39,7 @@ entry("uptime");
 entry("connect");
 entry("connect_icmp");
 entry("connect_arp");
+entry("connect_tcp");
+entry("bind_tcp");
+entry("listen_tcp");
+entry("accept_tcp");

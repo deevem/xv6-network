@@ -1,6 +1,9 @@
 #include "tcp.h"
 #include "ip.h"
 
+struct spinlock tcpsocks_list_lk;
+struct list_head tcpsocks_list_head;
+
 struct tcp_sock *tcp_sock_alloc() {
     struct tcp_sock *tcpsock = (struct tcp_sock *)kalloc();
     if (tcpsock == NULL) 
@@ -81,7 +84,7 @@ int tcp_read(struct file *f, uint64_t addr, int n) {
         return -1;
     
     acquire(&tcpsock->spinlk);
-    rest_len = tcp_receive(tcpsock, addr, n);
+//    rest_len = tcp_receive(tcpsock, addr, n);
     release(&tcpsock->spinlk);
 
     return rest_len;
@@ -102,14 +105,27 @@ int tcp_write(struct file *f, uint64_t buffer, int len) {
     return res;
 }
 
-int tcp_accept(struct file *f) {
+struct tcp_sock* tcp_accept_dequeue(struct tcp_sock* tcpsock) {
+    struct tcp_sock* new_tcpsock;
+    new_tcpsock = list_first_entry(&tcpsock->accept_queue, struct tcp_sock, list);
+    list_del_init(&new_tcpsock->list);
+    tcpsock->accept_backlog -= 1;
+    return new_tcpsock;
+}
+
+struct tcp_sock* tcp_accept(struct file *f) {
     struct tcp_sock *tcpsock = f->tcpsock;
     
     acquire(&tcpsock->spinlk);
-    sleep(&tcpsock->wait_accept, &tcpsock->spinlk);
-    release(&tcpsock->spinlk);
+    
+    while (list_empty(&tcpsock->accept_queue)) {
+        sleep(&tcpsock->wait_accept, &tcpsock->spinlk);
+    }
 
-    return 0;
+    struct tcp_sock *new_tcpsock = tcp_accept_dequeue(tcpsock);
+
+    release(&tcpsock->spinlk);
+    return new_tcpsock;
 }
 
 int tcp_close(struct file *f) {
@@ -135,7 +151,7 @@ int tcp_close(struct file *f) {
             tcp_set_state(tcpsock, TCP_FIN_WAIT_1);
             tcp_send_fin(tcpsock);
             tcpsock->tcb.send_next += 1;
-            bread;
+            break;
         case TCP_CLOSE_WAIT:
             tcp_set_state(tcpsock, TCP_LAST_ACK);
             tcp_send_fin(tcpsock);

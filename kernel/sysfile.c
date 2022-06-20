@@ -3,7 +3,6 @@
 // Mostly argument checking, since we don't trust
 // user code, and calls into file.c and fs.c.
 //
-
 #include "types.h"
 #include "riscv.h"
 #include "defs.h"
@@ -553,8 +552,9 @@ uint64 sys_connect_tcp(void) {
 	uint32_t src_port;
 	uint32_t dst_port;
 
-	if (argfd(0, 0, &f) < 0 || argint(1, &dst_addr) || argint(2, &src_port) || argint(3, &dst_port));
-		return -1;
+	if (argfd(0, 0, &f) < 0 || argint(1, (int*)&dst_addr) < 0|| argint(2, (int*)&src_port) < 0|| argint(3, (int*)&dst_port) < 0) {
+    return -1;
+  }
 	
 	if (f->type != FD_SOCK_TCP)
 		return -1;
@@ -566,7 +566,7 @@ uint64 sys_bind_tcp(void) {
 	struct file *f;
 	uint32_t src_port;
 
-	if (argfd(0, 0, &f) <0 || argint(1, &src_port) < 0) 
+	if (argfd(0, 0, &f) <0 || argint(1, (int*)&src_port) < 0) 
 		return -1;
 	
 	return tcp_bind(f, src_port);
@@ -576,7 +576,7 @@ uint64 sys_listen_tcp(void) {
 	struct file *f;
 	uint32_t backlog;
 
-	if (argfd(0, 0, &f) < 0 || argint(1, &backlog) < 0)
+	if (argfd(0, 0, &f) < 0 || argint(1, (int*)&backlog) < 0)
 		return -1;
 
 	return tcp_listen(f, backlog);
@@ -602,7 +602,7 @@ uint64 sys_accept_tcp(void) {
 
 	int fd;
 
-	if (fd = fdalloc(f) < 0) {
+	if ((fd = fdalloc(f)) < 0) {
 		fileclose(f);
 		return -1;
 	}

@@ -1,13 +1,13 @@
 #include "tcp.h"
 #include "utils.h"
-#include "proc.h"
+#include "../proc.h"
 
 struct tcp_sock * tcp_sock_lookup_establish(uint32_t src, uint32_t dst, uint16_t src_port, uint16_t dst_port) {
-
+    return 0;
 }
 
 struct tcp_sock * tcp_sock_lookup_listen(uint32_t dst, uint16_t dst_port) {
-
+    return 0;
 }
 
 struct tcp_sock * tcp_sock_lookup(uint32_t src, uint32_t dst, uint16_t src_port, uint16_t dst_port) {
@@ -122,7 +122,7 @@ void tcp_send_fin(struct tcp_sock *tcpsock) {
     tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
 }
 
-int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len) {
+int tcp_send(struct tcp_sock *tcpsock, uint64_t buffer, int len) {
     int rest_len = len;
     
     while (rest_len > 0) {
@@ -142,6 +142,8 @@ int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len) {
         tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
         tcpsock->tcb.send_next += packet_len;
     }
+
+    return len - rest_len;
 }
 
 
