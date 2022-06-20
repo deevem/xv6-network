@@ -96,6 +96,15 @@ int tcp_write(struct file *f, uint64_t buffer, int len) {
     return res;
 }
 
+void tcp_clear_listen_queue(struct tcp_sock *tcpsock) {
+    struct tcp_sock *list_tcpsock;
+    while (!list_empty(&tcpsock->listen_queue)) {
+        list_tcpsock = list_first_entry(&tcpsock->listen_queue, struct tcp_sock, list);
+        list_del_init(&list_tcpsock->list);
+        tcp_done(list_tcpsock);
+    }
+}
+
 int tcp_close(struct file *f) {
     struct tcp_sock *tcpsock = f->tcpsock;
 
