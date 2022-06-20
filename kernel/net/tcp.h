@@ -65,31 +65,33 @@ struct tcb {
 
 struct tcp_sock {
     struct list_head tcpsock_list;
+
     uint32_t src_addr;
     uint32_t dst_addr;
     uint16_t src_port;
     uint16_t dst_port;
 
-    int backlog;
-    int accept_backlog;
-
     uint32_t state;
+
     struct tcb tcb;
 
     uint32_t wait_connect;
     uint32_t wait_accept; 
     uint32_t wait_rcv;
 
+<<<<<<< HEAD
     struct list_head listen_queue;
     struct list_head accept_queue;
     struct list_head list;
 
     struct tcp_sock *parent;
+=======
+>>>>>>> 3cccd6d373a2c4e4a7c9d0308a0bd8a77ad4eec7
     struct spinlock spinlk;
 };
 
 void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr);
-void tcp_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq);
+void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq);
 
 // functions for send
 
@@ -117,3 +119,4 @@ struct list_head tcpsocks_list;
 struct spinlock tcpsocks_list_lk;
 
 // implementations for tcp socket
+struct tcp_sock *tcp_sock_alloc();

@@ -66,25 +66,9 @@ int tcp_listen(struct file *f, int backlog) {
     }
 
     tcpsock->state = TCP_LISTEN;
-    tcpsock->backlog = backlog;
 
     release(&tcpsock->spinlk);
     return 0;
-}
-
-struct tcp_sock * tcp_accept(struct file *f) {
-    struct tcp_sock *tcpsock = f->tcpsock;
-    acquire(&tcpsock->spinlk);
-
-    while (list_empty(&tcpsock->accept_queue))
-        sleep(&tcpsock->wait_accept, &tcpsock->spinlk);
-
-    struct tcp_sock *new_tcpsock = list_first_entry(&tcpsock->accept_queue, struct tcp_sock, list);
-    list_del_init(&new_tcpsock->list);
-    tcpsock->accept_backlog--;
-
-    release(&tcpsock->spinlk);
-    return new_tcpsock;
 }
 
 int tcp_read(struct file *f, uint64_t addr, int n) {
@@ -118,13 +102,14 @@ int tcp_write(struct file *f, uint64_t buffer, int len) {
     return res;
 }
 
-void tcp_clear_listen_queue(struct tcp_sock *tcpsock) {
-    struct tcp_sock *list_tcpsock;
-    while (!list_empty(&tcpsock->listen_queue)) {
-        list_tcpsock = list_first_entry(&tcpsock->listen_queue, struct tcp_sock, list);
-        list_del_init(&list_tcpsock->list);
-        tcp_done(list_tcpsock);
-    }
+int tcp_accept(struct file *f) {
+    struct tcp_sock *tcpsock = f->tcpsock;
+    
+    acquire(&tcpsock->spinlk);
+    sleep(&tcpsock->wait_accept, &tcpsock->spinlk);
+    release(&tcpsock->spinlk);
+
+    return 0;
 }
 
 int tcp_close(struct file *f) {
@@ -139,7 +124,6 @@ int tcp_close(struct file *f) {
             return 0;
             break;
         case TCP_LISTEN:
-            tcp_clear_listen_queue(tcpsock);
             release(&tcpsock->spinlk);
             tcp_done(tcpsock);
             return 0;
@@ -160,5 +144,11 @@ int tcp_close(struct file *f) {
     }
     
     release(&tcpsock->spinlk);
+    return 0;
+}
+
+int tcp_bind(struct file *f, uint16_t src_port) {
+    // TODO: add check port dup
+    f->tcpsock->src_port = src_port;
     return 0;
 }

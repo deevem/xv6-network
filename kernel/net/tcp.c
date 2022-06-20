@@ -18,7 +18,7 @@ struct tcp_sock * tcp_sock_lookup(uint32_t src, uint32_t dst, uint16_t src_port,
     return tcpsock;
 }
 
-void tcp_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq) {
+void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq) {
     tcphdr->data_offset = TCP_DOFFSET;
     tcphdr->src_port = htons(tcpsock->src_port);
     tcphdr->dst_port = htons(tcpsock->dst_port);
@@ -76,7 +76,7 @@ void tcp_send_syn(struct tcp_sock *tcpsock) {
     struct tcp_hdr *tcphdr = (struct tcp_hdr *)mbufpush(m, sizeof(struct tcp_hdr));
     tcphdr->syn = 1;
 
-    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.iss);
+    tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.iss);
 }
 
 void tcp_send_synack(struct tcp_sock *tcpsock) {
@@ -88,7 +88,7 @@ void tcp_send_synack(struct tcp_sock *tcpsock) {
     tcphdr->syn = 1;
     tcphdr->ack = 1;
 
-    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.iss);
+    tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.iss);
 }
 
 void tcp_send_ack(struct tcp_sock *tcpsock) {
@@ -99,7 +99,7 @@ void tcp_send_ack(struct tcp_sock *tcpsock) {
     struct tcp_hdr *tcphdr = (struct tcp_hdr *)mbufpush(m, sizeof(struct tcp_hdr));
     tcphdr->syn = 0;
     tcphdr->ack = 1;
-    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
+    tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
 }
 
 void tcp_send_reset(struct tcp_sock *tcpsock){
@@ -108,7 +108,7 @@ void tcp_send_reset(struct tcp_sock *tcpsock){
     tcphdr->rst = 1;
     tcpsock->tcb.send_unack = tcpsock->tcb.send_next; 
 
-    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
+    tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
 }
 void tcp_send_fin(struct tcp_sock *tcpsock) {
     if (tcpsock->state == TCP_CLOSE)
@@ -119,7 +119,7 @@ void tcp_send_fin(struct tcp_sock *tcpsock) {
     tcphdr->ack = 1;
     tcphdr->fin = 1;
     
-    tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
+    tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
 }
 
 int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len) {
@@ -139,7 +139,7 @@ int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len) {
         if (rest_len == 0)
             tcphdr->psh = 1;
         
-        tcp_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
+        tcp_sock_tx(tcpsock, tcphdr, m, tcpsock->tcb.send_next);
         tcpsock->tcb.send_next += packet_len;
     }
 }
