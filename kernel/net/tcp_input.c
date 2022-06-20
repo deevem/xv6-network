@@ -29,6 +29,7 @@ int tcp_synsent(struct tcp_sock* tcpsock, struct tcp_hdr* tcphdr) {
     
     tcp_set_state(tcpsock, TCP_ESTABLISHED);
     tcp_send_ack(tcpsock);
+    wakeup(&tcpsock->wait_connect);
     return 0;
 }
 

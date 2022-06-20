@@ -124,3 +124,9 @@ int tcp_close(struct file *f) {
     release(&tcpsock->spinlk);
     return 0;
 }
+
+int tcp_bind(struct file *f, uint16_t src_port) {
+    // TODO: add check port dup
+    f->tcpsock->src_port = src_port;
+    return 0;
+}
