@@ -1,6 +1,28 @@
 #include "tcp.h"
 #include "ip.h"
 
+struct tcp_sock *tcp_sock_alloc() {
+    struct tcp_sock *tcpsock = (struct tcp_sock *)kalloc();
+    if (tcpsock == NULL) 
+        return tcpsock;
+    memset(tcpsock, 0, sizeof tcpsock);
+
+    tcpsock->src_addr = local_ip;
+    tcp_set_state(tcpsock, TCP_CLOSE);
+    tcpsock->tcb.recv_window = TCP_DEFAULT_WINDOW;
+
+    list_init(&tcpsock->listen_queue);
+    list_init(&tcpsock->accept_queue);
+
+    initlock(&tcpsock->spinlk, "tcp sock spinlock");
+
+    acquire(&tcpsocks_list_lk);
+    list_add(&tcpsock->tcpsock_list, &tcpsocks_list_head);
+    release(&tcpsocks_list_lk);
+
+    return tcpsock;
+}
+
 
 int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int addrlen, int src_port) {
     struct tcp_sock *tcpsock = f->tcpsock;
@@ -22,7 +44,7 @@ int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int addrle
 
     tcp_send_syn(tcpsock);
 
-    // TODO: wait connect
+    sleep(&tcpsock->wait_connect, &tcpsock->spinlk);
 
     if (tcpsock->state != TCP_ESTABLISHED) {
         release(&tcpsock->spinlk);
