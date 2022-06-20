@@ -18,7 +18,6 @@ char* strcat(char* str1, char* str2)
     result[strlen(str1) + 1 + i] = str2[i];
   }
   result[strlen(str1) + strlen(str2) + 1] = '\0';
-  result[strlen(str1) + strlen(str2) + 2] = '\0';
   return result;
 }
 
