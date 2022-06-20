@@ -24,7 +24,7 @@ struct tcp_sock *tcp_sock_alloc() {
 }
 
 
-int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int addrlen, int src_port) {
+int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int src_port) {
     struct tcp_sock *tcpsock = f->tcpsock;
     acquire(&tcpsock->spinlk);
     if (tcpsock->state != TCP_CLOSE) {

@@ -107,6 +107,10 @@ extern uint64 sys_uptime(void);
 extern uint64 sys_connect(void);
 extern uint64 sys_connect_icmp(void);
 extern uint64 sys_connect_arp(void);
+extern uint64 sys_connect_tcp(void);
+extern uint64 sys_bind_tcp(void);
+extern uint64 sys_listen_tcp(void);
+extern uint64 sys_accept_tcp(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -133,6 +137,10 @@ static uint64 (*syscalls[])(void) = {
 [SYS_connect] sys_connect,
 [SYS_connect_icmp] sys_connect_icmp,
 [SYS_connect_arp] sys_connect_arp,
+[SYS_connect_tcp] sys_connect_tcp,
+[SYS_bind_tcp] sys_bind_tcp,
+[SYS_listen_tcp] sys_listen_tcp,
+[SYS_accept_tcp] sys_accept_tcp,
 };
 
 void

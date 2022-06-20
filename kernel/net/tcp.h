@@ -125,3 +125,8 @@ struct spinlock tcpsocks_list_lk;
 
 // implementations for tcp socket
 struct tcp_sock *tcp_sock_alloc();
+
+int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int src_port);
+int tcp_bind(struct file *f, uint16_t src_port);
+int tcp_listen(struct file *f, int backlog);
+int tcp_accept(struct file *f);
