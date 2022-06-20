@@ -16,6 +16,10 @@
 #define TCP_MAX_BACKLOG		128
 #define TCP_DEFALUT_MSS     512
 
+struct spinlock tcpsocks_list_lk;
+struct list_head tcpsocks_list_head;
+
+
 struct tcp_hdr {
     uint16_t src_port;
     uint16_t dst_port;
@@ -75,6 +79,11 @@ struct tcp_sock {
     uint32_t wait_accept; 
     uint32_t wait_rcv;
 
+    struct list_head listen_queue;
+    struct list_head accept_queue;
+    struct list_head list;
+
+    struct tcp_sock *parent;
     struct spinlock spinlk;
 };
 
