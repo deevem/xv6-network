@@ -55,20 +55,36 @@ struct tcp_mbuf_queue {
     uint32 len;
 };
 
-uint32_t tcp_mbuf_queue_len(const struct tcp_mbuf_queue *q) {
+inline uint32_t tcp_mbuf_queue_len(const struct tcp_mbuf_queue *q) {
     return q->len;
 }
 
-void tcp_mbuf_queue_init(struct tcp_mbuf_queue *q) {
+inline void tcp_mbuf_queue_init(struct tcp_mbuf_queue *q) {
     list_init(&q->head);
 }
 
-void tcp_mbuf_queue_add(struct tcp_mbuf_queue* q, struct mbuf* item, struct mbuf* next) {
+inline void tcp_mbuf_queue_add(struct tcp_mbuf_queue* q, struct mbuf* item, struct mbuf* next) {
     list_add_tail(&item->list, &next->list);
 }
 
-void tcp_mbuf_enqueue(struct tcp_mbuf_queue* q, struct mbuf* item) {
+inline void tcp_mbuf_enqueue(struct tcp_mbuf_queue* q, struct mbuf* item) {
     list_add_tail(&item->list, &q->head);
 }
 
+struct mbuf* tcp_mbuf_dequeue(struct tcp_mbuf_queue* q){
+    struct mbuf *m = list_first_entry(&q->head, struct mbuf, list);
+    list_del(&m->list);
+    q->len--;
+    return m;
+}
+
+inline int tcp_mbuf_queue_empty(const struct tcp_mbuf_queue *q){
+    return tcp_mbuf_queue_len(q) < 1;
+}
+
+struct mbuf* tcp_mbuf_queue_peek(struct tcp_mbuf_queue *q){
+    if (tcp_mbuf_queue_empty(q))
+        return NULL;
+    return list_first_entry(&q->head, struct mbuf, list);
+}
 #endif
