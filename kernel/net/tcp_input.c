@@ -38,6 +38,7 @@ int tcp_synrecv(struct tcp_sock* tcpsock, struct tcp_hdr* tcphdr) {
         return -1;
     
     tcp_set_state(tcpsock, TCP_ESTABLISHED);
+    wakeup(&tcpsock->wait_accept);
     return 0;
 }
 

@@ -80,6 +80,16 @@ int tcp_write(struct file *f, uint64_t buffer, int len) {
     return res;
 }
 
+int tcp_accept(struct file *f) {
+    struct tcp_sock *tcpsock = f->tcpsock;
+    
+    acquire(&tcpsock->spinlk);
+    sleep(&tcpsock->wait_accept, &tcpsock->spinlk);
+    release(&tcpsock->spinlk);
+
+    return 0;
+}
+
 int tcp_close(struct file *f) {
     struct tcp_sock *tcpsock = f->tcpsock;
 
