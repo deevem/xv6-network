@@ -2,6 +2,8 @@
 
 // copy from https://github.com/whileskies/xv6-riscv-ext 
 
+#define _inline inline __attribute__((always_inline))
+
 #define containof(ptr, type, member)\
 	((type *)((char *)(ptr) - (uint64)&((type *)0)->member))
 
