@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef NULL
+#define NULL ((void *)0)
+#endif
 // copy from https://github.com/whileskies/xv6-riscv-ext 
 
 #define _inline inline __attribute__((always_inline))
