@@ -79,14 +79,11 @@ struct tcp_sock {
     uint32_t wait_accept; 
     uint32_t wait_rcv;
 
-<<<<<<< HEAD
     struct list_head listen_queue;
     struct list_head accept_queue;
     struct list_head list;
 
     struct tcp_sock *parent;
-=======
->>>>>>> 3cccd6d373a2c4e4a7c9d0308a0bd8a77ad4eec7
     struct spinlock spinlk;
 };
 
