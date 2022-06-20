@@ -22,11 +22,11 @@ char* strcat(char* str1, char* str2)
   return result;
 }
 
-
-int main(int argc, char**argv){
-    if (argc <= 2)
+int main(int argc, char**argv)
+{
+    if (argc == 1)
     {
-        printf("Usage:  send group_name message \n");
+        printf("Usage: record group_name \n");
         exit(1);
     }
 
@@ -35,32 +35,8 @@ int main(int argc, char**argv){
         printf("the name should not longer than 20 chars");
         exit(1);
     }
-
-    int n = argc - 2;
-    int num = 0;
-    for (int i = 0; i < n; i++)
-    {
-      num += strlen(argv[i+2]);
-    }
-
-    if (num > 100)
-    {
-        printf("the message should not larger than 100 chars");
-        exit(1);
-    }
-    char * first = argv[0];
-    char * output = first;
-    for (int i = 0; i < argc - 1; i++)
-    {
-      output = strcat(first, argv[i + 1]);
-      if (i > 0)
-        {
-          free(first);
-        }
-      first = output;
-      
-    }
-    int fd = connect(MAKE_IP_ADDR(SERVER_IP1, SERVER_IP2, SERVER_IP3, SERVER_IP4), 12345, 54321); // the ip of serve is hard code, may change it future
+    char * output = strcat("record", argv[1]);
+    int fd = connect(MAKE_IP_ADDR(SERVER_IP1, SERVER_IP2, SERVER_IP3, SERVER_IP4), 12345, 54321);
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
         free(output);

@@ -7,7 +7,7 @@
 
 char* strcat(char* str1, char* str2)
 {
-  char * result = (char *) malloc(strlen(str1) +  strlen(str2) + 1);
+  char * result = (char *) malloc(strlen(str1) +  strlen(str2) + 2);
   for (int i = 0; i < strlen(str1); i++)
   {
     result[i] = str1[i];
@@ -17,7 +17,8 @@ char* strcat(char* str1, char* str2)
   {
     result[strlen(str1) + 1 + i] = str2[i];
   }
-result[strlen(str1) + strlen(str2) + 1] = '\0';
+  result[strlen(str1) + strlen(str2) + 1] = '\0';
+  result[strlen(str1) + strlen(str2) + 2] = '\0';
   return result;
 }
 
@@ -35,7 +36,7 @@ int main(int argc, char**argv){
     }
 
     char * output = strcat("add_group", argv[1]);
-    int fd = connect(MAKE_IP_ADDR(183,172,152,232), 12345, 54321); // the ip of serve is hard code, may change it future
+    int fd = connect(MAKE_IP_ADDR(SERVER_IP1, SERVER_IP2, SERVER_IP3, SERVER_IP4), 12345, 54321);
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
         free(output);

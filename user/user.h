@@ -46,3 +46,9 @@ void *memcpy(void *, const void *, uint);
 
 // dns.c
 uint32 dns(char *);
+
+// the server ip
+#define SERVER_IP1 183
+#define SERVER_IP2 172
+#define SERVER_IP3 154
+#define SERVER_IP4 13

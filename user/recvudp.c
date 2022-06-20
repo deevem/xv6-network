@@ -6,7 +6,7 @@
 #define MAKE_IP_ADDR(a, b, c, d) (((uint32_t)a << 24) | ((uint32_t)b << 16) | ((uint32_t)c << 8) | (uint32_t)d)
 
 int main(){
-    int fd = connect(MAKE_IP_ADDR(183,172,152,232), 2000, 54321);
+    int fd = connect(MAKE_IP_ADDR(SERVER_IP1, SERVER_IP2, SERVER_IP3, SERVER_IP4), 12345, 54321);
     printf("create success\n");
     char tmp[128];
     memset(&tmp, 0, sizeof(tmp));
