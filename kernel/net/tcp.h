@@ -73,6 +73,9 @@ struct tcp_sock {
 
     uint32_t state;
 
+    uint32_t backlog;
+    uint32_t accept_backlog;
+
     struct tcb tcb;
 
     uint32_t wait_connect;
