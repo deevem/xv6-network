@@ -53,7 +53,12 @@ int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t s
 
     tcp_send_syn(tcpsock);
 
+    printf("time to sleep up \n");
+
+
     sleep(&tcpsock->wait_connect, &tcpsock->spinlk);
+
+    printf("wake up ???\n");
 
     if (tcpsock->state != TCP_ESTABLISHED) {
         release(&tcpsock->spinlk);

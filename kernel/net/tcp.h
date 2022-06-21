@@ -117,6 +117,7 @@ void tcp_done(struct tcp_sock *tcpsock);
 
 // functions for rx
 int tcp_receive(struct tcp_sock* tcpsock, uint64_t buf, int len);
+int tcp_input_state(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct ip_hdr *iphdr, struct mbuf *m);
 uint32_t alloc_new_iss(void);
 
 // implementations for tcp socket

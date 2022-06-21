@@ -1,4 +1,4 @@
-#include "tcp.c"
+#include "tcp.h"
 
 struct tcp_sock *tcp_listen_subsock(struct tcp_sock* tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr *iphdr) {
     struct tcp_sock *new_tcpsock = tcp_sock_alloc();
@@ -14,7 +14,7 @@ struct tcp_sock *tcp_listen_subsock(struct tcp_sock* tcpsock, struct tcp_hdr* tc
     return new_tcpsock;
 }
 
-int tcp_listen(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr *iphdr, struct mbuf *m) {
+int tcp_listen_input(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr *iphdr, struct mbuf *m) {
     struct tcp_sock *new_tcpsock;
 
     if (tcphdr->ack == 1) {
@@ -44,6 +44,7 @@ fail:
 
 int tcp_synsent(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr *iphdr, struct mbuf *m) {
     
+
     if (tcphdr->syn == 1 && tcphdr->ack == 1) {
         tcpsock->tcb.irs = tcphdr->seq;
         tcpsock->tcb.recv_next = tcphdr->seq + 1;
@@ -53,6 +54,7 @@ int tcp_synsent(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr 
         tcp_set_state(tcpsock, TCP_ESTABLISHED);
         tcp_send_ack(tcpsock);
         wakeup(&tcpsock->wait_connect);
+        printf("wake up finish\n");
     }
     
     mbuffree(m);
@@ -115,7 +117,7 @@ int tcp_input_state(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct ip_
         case TCP_CLOSE:
             return tcp_closed(m);
         case TCP_LISTEN:
-            return tcp_listen(tcpsock, tcphdr, iphdr, m);
+            return tcp_listen_input(tcpsock, tcphdr, iphdr, m);
         case TCP_SYN_SENT:
             return tcp_synsent(tcpsock, tcphdr, iphdr, m);
         case TCP_SYN_RECEIVED:

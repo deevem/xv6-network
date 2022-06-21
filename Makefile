@@ -14,7 +14,8 @@ NETOBJS = \
 	kernel/net/pci.o \
 	kernel/net/socket.o \
 	kernel/net/tcp.o \
-	kernel/net/tcp_socket.o
+	kernel/net/tcp_socket.o \
+	kernel/net/tcp_input.o
 	
 OBJS = \
   $K/entry.o \

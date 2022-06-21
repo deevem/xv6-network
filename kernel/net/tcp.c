@@ -3,11 +3,29 @@
 #include "../proc.h"
 
 struct tcp_sock * tcp_sock_lookup_establish(uint32_t src, uint32_t dst, uint16_t src_port, uint16_t dst_port) {
-    return 0;
+    struct tcp_sock *tcpsock = NULL, *s;
+    acquire(&tcpsocks_list_lk);
+    list_for_each_entry(s, &tcpsocks_list_head, tcpsock_list) {
+        if (src == s->dst_addr && src_port == s->dst_port && dst_port == s->src_port) {
+            tcpsock = s;
+            break;
+        }
+    }
+    release(&tcpsocks_list_lk);
+    return tcpsock;
 }
 
 struct tcp_sock * tcp_sock_lookup_listen(uint32_t dst, uint16_t dst_port) {
-    return 0;
+    struct tcp_sock *tcpsock = NULL, *s;
+    acquire(&tcpsocks_list_lk);
+    list_for_each_entry(s, &tcpsocks_list_head, tcpsock_list) {
+        if (dst_port == s->src_port && s->state == TCP_LISTEN) {
+            tcpsock = s;
+            break;
+        }
+    }
+    release(&tcpsocks_list_lk);
+    return tcpsock;
 }
 
 struct tcp_sock * tcp_sock_lookup(uint32_t src, uint32_t dst, uint16_t src_port, uint16_t dst_port) {
@@ -112,8 +130,9 @@ void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr) {
     }
 
     acquire(&tcpsock->spinlk);
-    int r = 0; // to do
-    if (r != 0) 
+    int r = tcp_input_state(tcpsock, tcphdr, iphdr, m);
+    
+    if (r == 0) 
         release(&tcpsock->spinlk);
 
 }
