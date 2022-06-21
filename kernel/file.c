@@ -13,6 +13,7 @@
 #include "stat.h"
 #include "proc.h"
 #include "./net/socket.h"
+#include "./net/tcp.h"
 #include "./net/ip.h"
 
 struct devsw devsw[NDEV];
@@ -84,6 +85,8 @@ fileclose(struct file *f)
   }
   else if (ff.type == FD_SOCK){
     sockclose(ff.sock);
+  } else if (ff.type == FD_SOCK_TCP) {
+    tcp_close(&ff);
   }
 }
 

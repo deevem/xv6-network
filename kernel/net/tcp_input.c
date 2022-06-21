@@ -6,7 +6,7 @@ struct tcp_sock *tcp_listen_subsock(struct tcp_sock* tcpsock, struct tcp_hdr* tc
     new_tcpsock->src_addr = ntohl(iphdr->dst_addr);
     new_tcpsock->dst_addr = ntohl(iphdr->src_addr);
     new_tcpsock->src_port = tcphdr->dst_port;
-    new_tcpsock->src_addr = tcphdr->src_port;
+    new_tcpsock->dst_port = tcphdr->src_port;
     new_tcpsock->parent = tcpsock;
 
     list_add(&new_tcpsock->list, &tcpsock->listen_queue);
@@ -17,12 +17,14 @@ struct tcp_sock *tcp_listen_subsock(struct tcp_sock* tcpsock, struct tcp_hdr* tc
 int tcp_listen_input(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr *iphdr, struct mbuf *m) {
     struct tcp_sock *new_tcpsock;
 
+    printf("tcp listen\n");
+
     if (tcphdr->ack == 1) {
         tcp_send_reset(tcpsock);
         goto fail;
     }
 
-    if (tcphdr->syn != 0)
+    if (tcphdr->syn == 0)
         goto fail;
 
     new_tcpsock = tcp_listen_subsock(tcpsock, tcphdr, iphdr);
@@ -36,7 +38,7 @@ int tcp_listen_input(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip
     new_tcpsock->tcb.send_next = new_tcpsock->tcb.iss + 1;
     new_tcpsock->tcb.send_unack = new_tcpsock->tcb.iss;
 
-    tcp_send_synack(tcpsock);
+    tcp_send_synack(new_tcpsock);
 fail:
     mbuffree(m);
     return 0;
@@ -54,7 +56,6 @@ int tcp_synsent(struct tcp_sock *tcpsock, struct tcp_hdr* tcphdr, struct ip_hdr 
         tcp_set_state(tcpsock, TCP_ESTABLISHED);
         tcp_send_ack(tcpsock);
         wakeup(&tcpsock->wait_connect);
-        printf("wake up finish\n");
     }
     
     mbuffree(m);
@@ -66,9 +67,11 @@ int tcp_synrecv(struct tcp_sock *tcpsock) {
         return -1;
     if (tcpsock->parent->accept_backlog >= tcpsock->parent->backlog)
         return -1;
+    printf("syn recv process %d %d\n", tcpsock->parent->accept_backlog,tcpsock->parent->backlog );
     list_del(&tcpsock->list);
     list_add(&tcpsock->list, &tcpsock->parent->accept_queue);
     tcpsock->parent->accept_backlog++;
+    tcp_set_state(tcpsock, TCP_ESTABLISHED);
     wakeup(&tcpsock->parent->wait_accept);
     return 0;
 }
@@ -84,6 +87,7 @@ int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
         tcp_send_ack(tcpsock);
     } else {
         // TODO: update window
+        printf("Established\n");
     }
     return 0;
 }
@@ -104,6 +108,7 @@ int tcp_finwait1(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
 }
 
 int tcp_finwait2(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+    tcpsock->tcb.recv_next += 1;
     if (tcphdr->fin == 1) {
         tcp_send_ack(tcpsock);
         tcp_set_state(tcpsock, TCP_CLOSE);

@@ -128,6 +128,8 @@ void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr) {
         mbuffree(m);
         return;
     }
+    printf("tcp sock found! \n");
+
 
     acquire(&tcpsock->spinlk);
     int r = tcp_input_state(tcpsock, tcphdr, iphdr, m);
