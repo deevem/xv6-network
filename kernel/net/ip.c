@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "udp.h"
 #include "icmp.h"
+#include "tcp.h"
 
 void ip_tx_ready(struct mbuf* m) {
     struct ip_hdr *iphdr;

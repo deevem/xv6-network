@@ -18,7 +18,58 @@ struct tcp_sock * tcp_sock_lookup(uint32_t src, uint32_t dst, uint16_t src_port,
     return tcpsock;
 }
 
-void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq) {
+uint32 
+sum_every_16bits(void *addr, int count)
+{
+    register uint32 sum = 0;
+    uint16 * ptr = addr;
+    
+    while( count > 1 )  {
+        /*  This is the inner loop */
+        sum += * ptr++;
+        count -= 2;
+    }
+
+    /*  Add left-over byte, if any */
+    if( count > 0 )
+        sum += * (uint8 *) ptr;
+
+    return sum;
+}
+
+uint16 
+checksum1(void *addr, int count, int start_sum)
+{
+    /* Compute Internet Checksum for "count" bytes
+     *         beginning at location "addr".
+     * Taken from https://tools.ietf.org/html/rfc1071
+     */
+    uint32 sum = start_sum;
+
+    sum += sum_every_16bits(addr, count);
+    
+    /*  Fold 32-bit sum to 16 bits */
+    while (sum>>16)
+        sum = (sum & 0xffff) + (sum >> 16);
+
+    return ~sum;
+}
+
+int
+tcp_v4_checksum(struct mbuf *m, uint32 saddr, uint32 daddr)
+{
+  uint32 sum = 0;
+  
+  sum += saddr;
+  sum += daddr;
+  sum += htons(IPPROTO_TCP);
+  sum += htons(m->len);
+
+  return checksum1(m->head, m->len, sum);
+}
+
+
+void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint32_t seq) {
     tcphdr->data_offset = TCP_DOFFSET;
     tcphdr->src_port = htons(tcpsock->src_port);
     tcphdr->dst_port = htons(tcpsock->dst_port);
@@ -26,7 +77,7 @@ void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *
     tcphdr->ack_seq = htonl(tcpsock->tcb.recv_next);
     tcphdr->reserved = htons(0);
     tcphdr->window = htons(tcpsock->tcb.recv_window);
-    tcphdr->checksum = tcp_checksum(m, tcphdr->src_port, tcphdr->dst_port);
+    tcphdr->checksum = tcp_v4_checksum(m, htonl(tcpsock->src_addr), htonl(tcpsock->dst_addr));
     tcphdr->urg = htons(0);
 
     ip_tx(m, IPPROTO_TCP, tcpsock->dst_addr);
@@ -165,4 +216,12 @@ void tcp_done(struct tcp_sock *tcpsock) {
     tcp_set_state(tcpsock, TCP_CLOSE);
     tcp_free(tcpsock);
     tcp_sock_free(tcpsock);
+}
+
+uint32_t alloc_new_iss(void) {
+	static unsigned int iss = 12345678;
+	if (++iss >= 0xffffffff)
+		iss = 12345678;
+    printf("%d\n", iss);
+	return iss;
 }

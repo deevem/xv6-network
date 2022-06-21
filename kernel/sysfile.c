@@ -552,14 +552,33 @@ uint64 sys_connect_tcp(void) {
 	uint32_t src_port;
 	uint32_t dst_port;
 
-	if (argfd(0, 0, &f) < 0 || argint(1, (int*)&dst_addr) < 0|| argint(2, (int*)&src_port) < 0|| argint(3, (int*)&dst_port) < 0) {
+
+	if (argint(0, (int*)&dst_addr) < 0|| argint(1, (int*)&src_port) < 0|| argint(2, (int*)&dst_port) < 0) {
     return -1;
   }
-	
-	if (f->type != FD_SOCK_TCP)
+
+  if ((f = filealloc()) == 0) {
+    fileclose(f);
+    return -1;
+  }
+
+
+  f->type = FD_SOCK_TCP;
+	f->readable = 1;
+	f->writable = 1;
+	f->tcpsock = tcp_sock_alloc();
+	int fd;
+
+	if ((fd = fdalloc(f)) < 0) {
+		fileclose(f);
 		return -1;
+	}
 	
-	return tcp_connect(f, dst_addr, src_port, dst_port);
+
+	if (tcp_connect(f, dst_addr, src_port, dst_port) < 0)
+    return -1;
+
+  return fd;
 }
 
 uint64 sys_bind_tcp(void) {

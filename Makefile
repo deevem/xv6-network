@@ -153,6 +153,7 @@ UPROGS=\
 	$U/_grind\
 	$U/_wc\
 	$U/_zombie\
+	$U/_tcptest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
@@ -179,13 +180,13 @@ CPUS := 3
 endif
 
 FWDPORT = $(shell expr `id -u` % 5000 + 25999)
+TCPPORT = 2222
 
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-QEMUOPTS += -netdev user,id=net0,hostfwd=udp::12345-:2000,hostfwd=tcp::2222-:2222 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
-# QEMUOPTS += -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -object filter-dump,id=net0,netdev=net0,file=packets.pcap
+QEMUOPTS += -netdev user,id=net0,hostfwd=udp::$(FWDPORT)-:2000,hostfwd=tcp::$(TCPPORT)-:$(TCPPORT) -object filter-dump,id=net0,netdev=net0,file=packets.pcap
 QEMUOPTS += -device e1000,netdev=net0,bus=pcie.0
 
 qemu: $K/kernel fs.img

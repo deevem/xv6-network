@@ -26,6 +26,10 @@ int uptime(void);
 int connect(uint32, uint32, uint32);
 int connect_icmp(uint32, uint32, uint32);
 int connect_arp(uint32);
+int connect_tcp(uint32, uint32, uint32);
+int bind_tcp(uint32, uint32);
+int listen_tcp(uint32, uint32);
+int accept_tcp(uint32);
 
 // ulib.c
 int stat(const char*, struct stat*);

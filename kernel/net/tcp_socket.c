@@ -4,11 +4,17 @@
 struct spinlock tcpsocks_list_lk;
 struct list_head tcpsocks_list_head;
 
+void tcp_sock_init() {
+    list_init(&tcpsocks_list_head);
+}
+
 struct tcp_sock *tcp_sock_alloc() {
+
     struct tcp_sock *tcpsock = (struct tcp_sock *)kalloc();
     if (tcpsock == NULL) 
         return tcpsock;
-    memset(tcpsock, 0, sizeof tcpsock);
+    memset(tcpsock, 0, sizeof(struct tcp_sock));
+
 
     tcpsock->src_addr = local_ip;
     tcp_set_state(tcpsock, TCP_CLOSE);
@@ -27,7 +33,7 @@ struct tcp_sock *tcp_sock_alloc() {
 }
 
 
-int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int src_port) {
+int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t src_port) {
     struct tcp_sock *tcpsock = f->tcpsock;
     acquire(&tcpsock->spinlk);
     if (tcpsock->state != TCP_CLOSE) {
@@ -41,7 +47,7 @@ int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int src_po
     tcpsock->dst_addr = dst_addr;
 
     tcpsock->state = TCP_SYN_SENT;
-    tcpsock->tcb.iss = 0; // TODO random iss
+    tcpsock->tcb.iss = alloc_new_iss(); // TODO random iss
     tcpsock->tcb.send_unack = tcpsock->tcb.iss;
     tcpsock->tcb.send_next = tcpsock->tcb.iss + 1;
 

@@ -27,7 +27,7 @@ uint16_t checksum(const unsigned char* addr, int len) {
 
 }
 
-uint16_t tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr){
+uint32_t tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr){
     int len = m->len;
     
 
@@ -51,8 +51,8 @@ uint16_t tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr){
         sum += answer;
     }
 
-    sum = (sum & 0xffff) + (sum >> 16);
-    sum += (sum >> 16);
+    while (sum>>16)
+        sum = (sum & 0xffff) + (sum >> 16);
 
     answer = ~sum; 
 

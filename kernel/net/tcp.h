@@ -96,7 +96,7 @@ struct tcp_sock {
 };
 
 void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr);
-void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq);
+void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint32_t seq);
 
 // functions for send
 
@@ -117,12 +117,12 @@ void tcp_done(struct tcp_sock *tcpsock);
 
 // functions for rx
 int tcp_receive(struct tcp_sock* tcpsock, uint64_t buf, int len);
-uint32_t alloc_new_iss();
+uint32_t alloc_new_iss(void);
 
 // implementations for tcp socket
 struct tcp_sock *tcp_sock_alloc();
 
-int tcp_connect(struct file *f, uint16_t dst_addr, uint16_t dst_port, int src_port);
+int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t src_port);
 int tcp_bind(struct file *f, uint16_t src_port);
 int tcp_listen(struct file *f, int backlog);
 struct tcp_sock* tcp_accept(struct file *f);

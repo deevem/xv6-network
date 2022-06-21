@@ -10,7 +10,7 @@ int main() {
     char output[] = "test udp socket\0";
     //char input[1000];
     
-    int fd = connect(MAKE_IP_ADDR(192,168,0,100), 12345, 54321);
+    int fd = connect(MAKE_IP_ADDR(127,0,0,1), 12345, 54321);
     if (write(fd, output, strlen(output)) < 0) {
         printf("udp tx failed\n");
         exit(1);

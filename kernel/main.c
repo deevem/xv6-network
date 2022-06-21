@@ -33,6 +33,7 @@ main()
     pci_init();
     // init socket
     sockinit();
+    tcp_sock_init();
     // run net test
     //testnet();
 
