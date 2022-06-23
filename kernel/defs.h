@@ -189,3 +189,4 @@ void            virtio_disk_intr(void);
 void pci_init();
 void e1000_intr(void);
 void sockinit(void);
+void tcp_sock_init();

@@ -13,6 +13,7 @@
 #include "stat.h"
 #include "proc.h"
 #include "./net/socket.h"
+#include "./net/tcp.h"
 #include "./net/ip.h"
 
 struct devsw devsw[NDEV];
@@ -84,6 +85,8 @@ fileclose(struct file *f)
   }
   else if (ff.type == FD_SOCK){
     sockclose(ff.sock);
+  } else if (ff.type == FD_SOCK_TCP) {
+    tcp_close(&ff);
   }
 }
 
@@ -186,6 +189,8 @@ filewrite(struct file *f, uint64 addr, int n)
     ret = (i == n ? n : -1);
   }else if (f->type == FD_SOCK){
     ret = sockwrite(f->sock, addr, n);
+  } else if (f->type == FD_SOCK_TCP) {
+    ret = tcp_write(f, addr, n);
   } else {
     panic("filewrite");
   }

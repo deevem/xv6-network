@@ -23,3 +23,7 @@
 #define SYS_connect 22
 #define SYS_connect_icmp 23
 #define SYS_connect_arp 24
+#define SYS_connect_tcp 25
+#define SYS_bind_tcp 26
+#define SYS_listen_tcp 27
+#define SYS_accept_tcp 28

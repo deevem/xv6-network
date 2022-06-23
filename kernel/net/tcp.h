@@ -1,11 +1,11 @@
 #pragma once 
 
-#include "spinlock.h"
 #include "sysheaders.h"
+#include "../spinlock.h"
 #include "mbuf.h"
 #include "list.h"
 #include "ip.h"
-#include "file.h"
+#include "../file.h"
 
 #define TCP_MIN_DATA_OFF 5
 
@@ -16,8 +16,8 @@
 #define TCP_MAX_BACKLOG		128
 #define TCP_DEFALUT_MSS     512
 
-struct spinlock tcpsocks_list_lk;
-struct list_head tcpsocks_list_head;
+extern struct spinlock tcpsocks_list_lk;
+extern struct list_head tcpsocks_list_head;
 
 
 struct tcp_hdr {
@@ -96,7 +96,7 @@ struct tcp_sock {
 };
 
 void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr);
-void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint16_t seq);
+void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint32_t seq);
 
 // functions for send
 
@@ -108,7 +108,7 @@ void tcp_send_ack(struct tcp_sock *tcpsock);
 void tcp_send_synack(struct tcp_sock *tcpsock);
 
 // main data tx function
-int tcp_send(struct tcp_sock *tcpsock, uint64_t *buffer, int len);
+int tcp_send(struct tcp_sock *tcpsock, uint64_t buffer, int len);
 
 
 // for tcp socket control
@@ -117,14 +117,18 @@ void tcp_done(struct tcp_sock *tcpsock);
 
 // functions for rx
 int tcp_receive(struct tcp_sock* tcpsock, uint64_t buf, int len);
-uint32_t alloc_new_iss();
-
-// list and spinlocks for tcp connections
-struct list_head tcpsocks_list;
-struct spinlock tcpsocks_list_lk;
+int tcp_input_state(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct ip_hdr *iphdr, struct mbuf *m);
+uint32_t alloc_new_iss(void);
 
 // implementations for tcp socket
 struct tcp_sock *tcp_sock_alloc();
 
 int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m);
 int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len);
+int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port);
+int tcp_close(struct file *f);
+int tcp_bind(struct file *f, uint16_t src_port);
+int tcp_listen(struct file *f, int backlog);
+struct tcp_sock* tcp_accept(struct file *f);
+int tcp_write(struct file *f, uint64_t buffer, int len);
+int tcp_read(struct file *f, uint64_t addr, int n);

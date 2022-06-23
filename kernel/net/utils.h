@@ -6,10 +6,8 @@
 
 uint16_t checksum(const unsigned char* addr, int len);
 
-uint16_t tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr);
+uint32_t tcp_checksum(struct mbuf* m, uint32_t saddr, uint32_t daddr);
 
-int min(int a, int b) {
-    return a < b ? a : b;
-}
+int min(int a, int b);
 
 #endif

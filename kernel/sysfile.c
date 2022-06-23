@@ -3,7 +3,6 @@
 // Mostly argument checking, since we don't trust
 // user code, and calls into file.c and fs.c.
 //
-
 #include "types.h"
 #include "riscv.h"
 #include "defs.h"
@@ -18,6 +17,8 @@
 #include "./net/socket.h"
 #include "./net/ip.h"
 #include "./net/arp.h"
+#include "./net/tcp.h"
+
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -544,3 +545,104 @@ uint64 sys_connect_arp(void)
   arp_tx(ARP_OP_REQUEST, broadcast_mac, dst_ip);
   return 0;
 }
+
+uint64 sys_connect_tcp(void) {
+	struct file *f;
+	uint32_t dst_addr;
+	uint32_t dst_port;
+
+
+	if (argint(0, (int*)&dst_addr) < 0||argint(1, (int*)&dst_port) < 0) {
+    return -1;
+  }
+
+  if ((f = filealloc()) == 0) {
+    fileclose(f);
+    return -1;
+  }
+
+
+  f->type = FD_SOCK_TCP;
+	f->readable = 1;
+	f->writable = 1;
+	f->tcpsock = tcp_sock_alloc();
+	int fd;
+
+	if ((fd = fdalloc(f)) < 0) {
+		fileclose(f);
+		return -1;
+	}
+	
+
+	if (tcp_connect(f, dst_addr, dst_port) < 0)
+    return -1;
+
+  return fd;
+}
+
+uint64 sys_bind_tcp(void) {
+	struct file *f;
+	uint32_t src_port;
+
+	if (argint(0, (int*)&src_port) < 0) 
+		return -1;
+	
+    if ((f = filealloc()) == 0) {
+    fileclose(f);
+    return -1;
+  }
+
+  f->type = FD_SOCK_TCP;
+	f->readable = 1;
+	f->writable = 1;
+	f->tcpsock = tcp_sock_alloc();
+	int fd;
+
+	if ((fd = fdalloc(f)) < 0) {
+		fileclose(f);
+		return -1;
+	}
+
+	tcp_bind(f, src_port);
+
+  return fd;
+}
+
+uint64 sys_listen_tcp(void) {
+	struct file *f;
+	uint32_t backlog;
+
+	if (argfd(0, 0, &f) < 0 || argint(1, (int*)&backlog) < 0)
+		return -1;
+
+	return tcp_listen(f, backlog);
+}
+
+uint64 sys_accept_tcp(void) {
+	struct file *f;
+	
+	if (argfd(0, 0, &f) < 0)
+		return -1;
+	
+	struct tcp_sock* tcpsock = tcp_accept(f);
+
+	if (((f = filealloc()) == 0)) {
+		fileclose(f);
+		return -1;
+	}
+
+	f->type = FD_SOCK_TCP;
+	f->readable = 1;
+	f->writable = 1;
+	f->tcpsock = tcpsock;
+
+	int fd;
+
+	if ((fd = fdalloc(f)) < 0) {
+		fileclose(f);
+		return -1;
+	}
+
+	return fd;
+
+ }

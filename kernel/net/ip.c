@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "udp.h"
 #include "icmp.h"
+#include "tcp.h"
 
 void ip_tx_ready(struct mbuf* m) {
     struct ip_hdr *iphdr;
@@ -56,6 +57,8 @@ void ip_rx(struct mbuf* m) {
         udp_rx(m, len, iphdr);
     else if (iphdr->protocol == IPPROTO_ICMP)
         icmp_incoming(m);       
+    else if (iphdr->protocol == IPPROTO_TCP)
+        tcp_rx(m, m->len, iphdr);
     else 
         mbuffree(m);
     return;
