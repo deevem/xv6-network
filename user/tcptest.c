@@ -7,9 +7,13 @@
 
 void asClient() {
     int fd;
-    if ((fd = connect_tcp(MAKE_IP_ADDR(182,61,200,7), 80, 34)) < 0) {
+    char message[] = "test message form xv6\0";
+    if ((fd = connect_tcp(MAKE_IP_ADDR(127,0,0,1), 2333, 2222)) < 0) {
         printf("tcp GG\n");
     }
+    printf("connect finish\n");
+    write(fd, (const void *)message, strlen(message));
+    printf("write finish\n");
     close(fd);
     exit(0);
 }
@@ -36,7 +40,7 @@ void asServer() {
 }
 
 int main() {
-    asServer();
+    asClient();
     exit(0);
     return 0;
 }

@@ -47,7 +47,7 @@ int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t s
     tcpsock->dst_addr = dst_addr;
 
     tcpsock->state = TCP_SYN_SENT;
-    tcpsock->tcb.iss = alloc_new_iss(); // TODO random iss
+    tcpsock->tcb.iss = alloc_new_iss();
     tcpsock->tcb.send_unack = tcpsock->tcb.iss;
     tcpsock->tcb.send_next = tcpsock->tcb.iss + 1;
 

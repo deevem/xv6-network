@@ -127,3 +127,5 @@ int tcp_close(struct file *f);
 int tcp_bind(struct file *f, uint16_t src_port);
 int tcp_listen(struct file *f, int backlog);
 struct tcp_sock* tcp_accept(struct file *f);
+int tcp_write(struct file *f, uint64_t buffer, int len);
+int tcp_read(struct file *f, uint64_t addr, int n);

@@ -208,6 +208,7 @@ int tcp_send(struct tcp_sock *tcpsock, uint64_t buffer, int len) {
 
         struct tcp_hdr *tcphdr = (struct tcp_hdr *)mbufpush(m, sizeof(struct tcp_hdr));
         tcphdr->ack = 1;
+        rest_len -= packet_len;
         if (rest_len == 0)
             tcphdr->psh = 1;
         
