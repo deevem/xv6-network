@@ -122,7 +122,7 @@ uint32_t alloc_new_iss(void);
 
 // implementations for tcp socket
 struct tcp_sock *tcp_sock_alloc();
-int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t src_port);
+int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port);
 int tcp_close(struct file *f);
 int tcp_bind(struct file *f, uint16_t src_port);
 int tcp_listen(struct file *f, int backlog);

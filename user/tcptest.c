@@ -8,7 +8,7 @@
 void asClient() {
     int fd;
     char message[] = "test message form xv6\0";
-    if ((fd = connect_tcp(MAKE_IP_ADDR(127,0,0,1), 2333, 2222)) < 0) {
+    if ((fd = connect_tcp(MAKE_IP_ADDR(127,0,0,1), 2333)) < 0) {
         printf("tcp GG\n");
     }
     printf("connect finish\n");

@@ -549,11 +549,10 @@ uint64 sys_connect_arp(void)
 uint64 sys_connect_tcp(void) {
 	struct file *f;
 	uint32_t dst_addr;
-	uint32_t src_port;
 	uint32_t dst_port;
 
 
-	if (argint(0, (int*)&dst_addr) < 0|| argint(1, (int*)&src_port) < 0|| argint(2, (int*)&dst_port) < 0) {
+	if (argint(0, (int*)&dst_addr) < 0||argint(1, (int*)&dst_port) < 0) {
     return -1;
   }
 
@@ -575,7 +574,7 @@ uint64 sys_connect_tcp(void) {
 	}
 	
 
-	if (tcp_connect(f, dst_addr, src_port, dst_port) < 0)
+	if (tcp_connect(f, dst_addr, dst_port) < 0)
     return -1;
 
   return fd;

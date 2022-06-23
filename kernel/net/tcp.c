@@ -202,8 +202,8 @@ int tcp_send(struct tcp_sock *tcpsock, uint64_t buffer, int len) {
         struct mbuf *m = mbufalloc(MBUF_DEFAULT_HEADROOM);
         if (m == NULL)
             return len - rest_len;
-        mbufput(m, packet_len);
         copyin(myproc()->pagetable, m->head, buffer, packet_len);
+        mbufput(m, packet_len);
         buffer += packet_len;
 
         struct tcp_hdr *tcphdr = (struct tcp_hdr *)mbufpush(m, sizeof(struct tcp_hdr));

@@ -1,11 +1,52 @@
 #include "tcp.h"
 #include "ip.h"
 
+#define MIN_PORT 10
+#define MAX_PORT_N 5000
+
 struct spinlock tcpsocks_list_lk;
 struct list_head tcpsocks_list_head;
 
 void tcp_sock_init() {
     list_init(&tcpsocks_list_head);
+}
+
+int alloc_port(struct file *f, uint16_t port) {
+
+    if (port < MIN_PORT || port > MAX_PORT_N || f->type != FD_SOCK_TCP) {
+        return 0;
+    }
+
+    acquire(&tcpsocks_list_lk);
+
+    int dup = 0;
+    struct tcp_sock *s;
+    list_for_each_entry(s, &tcpsocks_list_head, tcpsock_list) {
+        if (s->src_port == port)
+            dup ++;
+    }
+
+    if (dup == 0)
+        f->tcpsock->src_port = port;
+
+    release(&tcpsocks_list_lk);
+
+    return !dup;
+}
+
+int random_alloc_port(struct file *f) {
+    uint32_t port = ticks % MAX_PORT_N;
+    if (port < MIN_PORT)
+        port = MIN_PORT;
+    int cnt = 1;
+    while (alloc_port(f, port) == 0) {
+        port = (port + 1) % MAX_PORT_N;
+        port = port < MIN_PORT ? MIN_PORT : port;
+        cnt ++;
+        if (cnt > MAX_PORT_N)
+            return -1;
+    }
+    return port;
 }
 
 struct tcp_sock *tcp_sock_alloc() {
@@ -33,7 +74,7 @@ struct tcp_sock *tcp_sock_alloc() {
 }
 
 
-int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t src_port) {
+int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port) {
     struct tcp_sock *tcpsock = f->tcpsock;
     acquire(&tcpsock->spinlk);
     if (tcpsock->state != TCP_CLOSE) {
@@ -41,7 +82,7 @@ int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port, uint16_t s
         return -1;
     }
 
-    tcpsock->src_port = src_port;
+    tcpsock->src_port = random_alloc_port(f);
     tcpsock->dst_port = dst_port;
     tcpsock->src_addr = local_ip;
     tcpsock->dst_addr = dst_addr;

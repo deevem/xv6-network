@@ -83,8 +83,10 @@ int tcp_closed(struct mbuf *m) {
 
 int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
     if (tcphdr->fin == 1) {
-        tcp_set_state(tcpsock, TCP_CLOSE_WAIT);
+        tcp_set_state(tcpsock, TCP_LAST_ACK);
+        tcpsock->tcb.recv_next += 1;
         tcp_send_ack(tcpsock);
+        tcp_send_fin(tcpsock);
     } else {
         // TODO: update window
         printf("Established\n");
@@ -94,7 +96,6 @@ int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
 
 int tcp_lastack(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
     if (tcphdr->ack == 1) {
-        tcp_send_fin(tcpsock);
         tcp_set_state(tcpsock, TCP_CLOSE);
     }
     return 0;
@@ -108,9 +109,11 @@ int tcp_finwait1(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
 }
 
 int tcp_finwait2(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+    printf("wait 2 process\n");
     tcpsock->tcb.recv_next += 1;
     if (tcphdr->fin == 1) {
         tcp_send_ack(tcpsock);
+        // Todo: time wait
         tcp_set_state(tcpsock, TCP_CLOSE);
     }
     return 0;
