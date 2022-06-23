@@ -15,7 +15,8 @@ NETOBJS = \
 	kernel/net/socket.o \
 	kernel/net/tcp.o \
 	kernel/net/tcp_socket.o \
-	kernel/net/tcp_input.o
+	kernel/net/tcp_input.o \
+	kernel/net/tcpdata.o 
 	
 OBJS = \
   $K/entry.o \

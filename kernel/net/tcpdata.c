@@ -1,7 +1,7 @@
-#include "list.h"
 #include "tcp.h"
 #include "mbuf.h"
-#include "proc.h"
+#include "../proc.h"
+#include "list.h"
 
 static void tcp_consume_ofo_queue(struct tcp_sock* sock){//move first mbuf in ofo_queue into rcv_queue when in order
     struct mbuf* m = NULL;
