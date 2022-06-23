@@ -124,7 +124,7 @@ uint32_t alloc_new_iss(void);
 struct tcp_sock *tcp_sock_alloc();
 
 int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m);
-int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len);
+int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len, int* psh);
 int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port);
 int tcp_close(struct file *f);
 int tcp_bind(struct file *f, uint16_t src_port);

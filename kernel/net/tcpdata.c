@@ -53,7 +53,7 @@ int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m){
     return 0;
 }
 
-int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len){
+int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len, int* psh){
     struct tcp_hdr* th;
     int rlen = 0;
 
@@ -72,7 +72,7 @@ int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len){
         ubuf += dlen;
         
         if(m->len == 0){
-            // if(sock->psh) sock->flags |= TCP_PSH;
+             if(th->psh) *psh = 1;
             tcp_mbuf_dequeue(&sock->rcv_queue);
             mbuffree(m);
         }
