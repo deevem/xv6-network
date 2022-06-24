@@ -156,6 +156,7 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
 	$U/_tcptest\
+	$U/_wget\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

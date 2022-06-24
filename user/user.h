@@ -39,6 +39,7 @@ char* strchr(const char*, char c);
 int strcmp(const char*, const char*);
 void fprintf(int, const char*, ...);
 void printf(const char*, ...);
+int snprintf(char *buf, int sz, char *fmt, ...);
 char* gets(char*, int max);
 uint strlen(const char*);
 void* memset(void*, int, uint);
