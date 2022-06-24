@@ -2,12 +2,12 @@
 #define MBUF
 #include "sysheaders.h"
 #include "list.h"
-#define MBUF_SIZE 256
+#define MBUF_SIZE 2048
 #define MBUF_DEFAULT_HEADROOM  128
 struct mbuf {
     struct mbuf* next;
     char*        head;
-    uint8_t      len;
+    uint32_t      len;
     char         buf[MBUF_SIZE];
 
     // for tcp items

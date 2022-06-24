@@ -96,7 +96,7 @@ int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbu
             }
     }   
 
-    if (tcphdr->psh || m->len) {
+    if (tcphdr->psh || m->len > 0) {
         tcp_data_queue(tcpsock, m);
     }
     return 0;
@@ -117,7 +117,6 @@ int tcp_finwait1(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
 }
 
 int tcp_finwait2(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
-    printf("wait 2 process\n");
     tcpsock->tcb.recv_next += 1;
     if (tcphdr->fin == 1) {
         tcp_send_ack(tcpsock);

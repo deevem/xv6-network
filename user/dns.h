@@ -61,7 +61,7 @@ struct dns_data {
 } __attribute__((packed));
 
 
-int dns_request(uint8* buf, const char* host);
+int dns_request(uint8* buf, char* host);
 int dns_response(uint8* buf, int recv_len);
 
 uint32 dns(char* ss);

@@ -3,7 +3,7 @@
 #include "../kernel/param.h"
 #include "user.h"
 
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 20480
 #define LINE_SIZE 1024
 
 char buffer[BUFFER_SIZE + 10];
@@ -44,7 +44,7 @@ char * parse_http_header(int fd, int *rn) {
     if (n < 0)
         return 0;
     for (int i = 0; i < n; i++) {
-        if (buffer[i] == 'r') {
+        if (buffer[i] == '\r') {
             char line[LINE_SIZE];
             memset(line, 0, 300);
             int line_size = i - lb;
@@ -56,7 +56,7 @@ char * parse_http_header(int fd, int *rn) {
             i++; // remove \n
             lb = i + 1; // remove \r \n
             if (line_size == 0)
-                break;;
+                break;
         }
     }
 
@@ -100,17 +100,29 @@ int main(int argc, char *argv[]) {
     int rn = 0;
     char *d = parse_http_header(fd, &rn);
     
+    printf("%d %d", rn, content_len);
+
     if (content_len > 0) {
+        printf("content len\n");
         int n;
         write(1, d, content_len < rn ? content_len : rn);
         content_len -= rn;
         if (content_len > 0) {
             while ((n = read(fd, buffer, BUFFER_SIZE)) > 0) {
-                write(1, buffer, content_len < n ? content_len : n);
+                printf("%d\n", n);
+                //write(1, buffer, content_len < n ? content_len : n);
                 content_len -= n;
                 if (content_len == 0)
                     break;
             }
+        }
+    } else if (chunked) {
+        printf("test chunk\n");
+    } else {
+        write(1, d, rn);
+        int n;
+        while ((n = read(fd, buffer, BUFFER_SIZE)) > 0) {
+            write(1, buffer, n);
         }
     }
 

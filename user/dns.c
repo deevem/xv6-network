@@ -32,7 +32,7 @@ static void decode_qname(char* qn) {
     }
 }
 
-int dns_request(uint8* buf, const char* host) {
+int dns_request(uint8* buf, char* host) {
     // len of the dns request
     int             len = sizeof(struct dns_hdr);
     struct dns_hdr* dnshdr = ( struct dns_hdr* )buf;
@@ -57,9 +57,7 @@ int dns_request(uint8* buf, const char* host) {
 
 int dns_response(uint8* buf, int recv_len) {
     struct dns_hdr* dnshdr = ( struct dns_hdr* )buf;
-    char*           qname = NULL;
-    int             record = 0;
-    uint32 ip_receive = 0;
+    int len;
 
     if(!dnshdr->qr) {
         printf("Not a DNS response for %d\n", ntohs(dnshdr->id));
@@ -74,16 +72,15 @@ int dns_response(uint8* buf, int recv_len) {
         exit(1);
     }
 
-    int len = sizeof(struct dns_hdr);
+    len = sizeof(struct dns_hdr);
 
     // question entries
     for (int i = 0; i < ntohs(dnshdr->qdcount); i++) {
         char* qn = ( char* )(buf + len);
-        qname = qn;
         decode_qname(qn);
         len += strlen(qn) + 1;
         len += sizeof(struct dns_question);
-        printf("dns question %s \n", qname);
+        printf("dns question %s \n", qn);
     }
 
 
@@ -102,26 +99,18 @@ int dns_response(uint8* buf, int recv_len) {
         struct dns_data* d = ( struct dns_data* )(buf + len);
         len += sizeof(struct dns_data);
 
-        if (ntohs(d->type) == ARECORD && ntohs(d->len) == 4) {
-            record = 1;
+        if (ntohs(d->type) == ARECORD) {
             uint8_t* ip = (uint8_t*)(buf + len);
             printf("%d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
             // ip_receive = ((uint32_t)(ip[0]) << 24) + ((uint32_t)(ip[1]) << 16) + ((uint32_t)(ip[2]) << 8) + ip[3];
-            ip_receive = MAKE_IP_ADDR(ip[0], ip[1], ip[2], ip[3]);
+            return MAKE_IP_ADDR(ip[0], ip[1], ip[2], ip[3]);
             len += 4;
+        } else {
+            len += ntohs(d->len);
         }
     }
 
-    if(len != recv_len) {
-        printf("Processed %d data bytes but received %d\n", len, recv_len);
-        exit(1);
-    }
-    if(!record) {
-        printf("Didn't receive an arecord\n");
-        exit(1);
-    }
-    // ..... 
-    return ip_receive;
+    return 0;
 }
 
 uint32 dns(char* ss)
@@ -133,7 +122,7 @@ uint32 dns(char* ss)
     s[strlen(s) + 1] = '\0';
     s[strlen(s)] = '.';
     
-    #define N 200
+    #define N 500
     uint8 obuf[N];
     uint8 ibuf[N];
     uint32 dst;

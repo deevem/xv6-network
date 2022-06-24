@@ -45,7 +45,7 @@ void udp_rx(struct mbuf *m, uint16_t len, struct ip_hdr *iphdr) {
     }
 
     // only len in buffer saved
-    mbuftrim(m, m->len - len);
+    //mbuftrim(m, m->len - len);
 
     src_ip = ntohl(iphdr->src_addr);
     src_port = ntohs(udphdr->src_port);
