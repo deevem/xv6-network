@@ -97,12 +97,8 @@ int tcp_connect(struct file *f, uint32_t dst_addr, uint16_t dst_port) {
 
     tcp_send_syn(tcpsock);
 
-    printf("time to sleep up \n");
-
-
     sleep(&tcpsock->wait_connect, &tcpsock->spinlk);
 
-    printf("wake up ???\n");
 
     if (tcpsock->state != TCP_ESTABLISHED) {
         release(&tcpsock->spinlk);
@@ -229,7 +225,6 @@ int tcp_close(struct file *f) {
             tcp_done(tcpsock);
             break;
         case TCP_ESTABLISHED:
-            printf("here running\n");
             tcp_set_state(tcpsock, TCP_FIN_WAIT_1);
             tcp_send_fin(tcpsock);
             tcpsock->tcb.send_next += 1;
@@ -246,8 +241,6 @@ int tcp_close(struct file *f) {
 }
 
 int tcp_bind(struct file *f, uint16_t src_port) {
-    // TODO: add check port dup
-    printf("%d src\n", src_port);
     f->tcpsock->src_port = src_port;
     return 0;
 }

@@ -123,8 +123,10 @@ void tcp_rx(struct mbuf* m, uint16_t len, struct ip_hdr* iphdr) {
     struct tcp_hdr *tcphdr;
     tcphdr = (struct tcp_hdr*)mbufpull(m, sizeof(struct tcp_hdr));
 
-    if (tcphdr->data_offset > TCP_MIN_DATA_OFF) 
-        mbufpull(m, 4 * (tcphdr->data_offset - TCP_MIN_DATA_OFF));
+    if (tcphdr->data_offset > TCP_MIN_DATA_OFF) {
+        m->head += (tcphdr->data_offset - TCP_MIN_DATA_OFF) * 4;
+        m->len -= (tcphdr->data_offset - TCP_MIN_DATA_OFF) * 4;
+    }
 
     tcphdr->src_port = ntohs(tcphdr->src_port);
     tcphdr->dst_port = ntohs(tcphdr->dst_port);
@@ -260,6 +262,5 @@ uint32_t alloc_new_iss(void) {
 	static unsigned int iss = 12345678;
 	if (++iss >= 0xffffffff)
 		iss = 12345678;
-    printf("%d\n", iss);
 	return iss;
 }

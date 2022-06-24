@@ -90,14 +90,13 @@ int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbu
     } else {
         if (tcpsock->tcb.send_unack <= tcphdr->ack_seq && tcpsock->tcb.send_next >= tcphdr->ack_seq)
             if (tcpsock->tcb.send_win1 < tcphdr->seq || (tcpsock->tcb.send_win1 == tcphdr->seq && tcpsock->tcb.send_win2 <= tcphdr->ack_seq)) {
-                printf("Window updated\n");
                 tcpsock->tcb.send_window = tcphdr->window;
                 tcpsock->tcb.send_win1 = tcphdr->seq;
                 tcpsock->tcb.send_win2 = tcphdr->ack_seq;
             }
     }   
 
-    if (tcphdr->psh || m->len > 0) {
+    if (tcphdr->psh || m->len) {
         tcp_data_queue(tcpsock, m);
     }
     return 0;

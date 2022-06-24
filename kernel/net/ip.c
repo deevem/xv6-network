@@ -53,6 +53,8 @@ void ip_rx(struct mbuf* m) {
 
     len = ntohs(iphdr->len) - sizeof(struct ip_hdr);
 
+    mbuftrim(m, m->len - len);
+
     if (iphdr->protocol == IPPROTO_UDP)
         udp_rx(m, len, iphdr);
     else if (iphdr->protocol == IPPROTO_ICMP)
