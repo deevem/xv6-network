@@ -46,7 +46,7 @@ int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m){
         tcp_mbuf_enqueue(&sock->rcv_queue,m);
 
         tcp_consume_ofo_queue(sock);
-        printf("rcv wake up %d \n", sock);
+
         wakeup(&sock->wait_rcv);
     } else {
         tcp_check_ofo_queue(sock,m);

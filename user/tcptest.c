@@ -46,7 +46,7 @@ void asServer() {
 }
 
 int main() {
-    asClient();
+    asServer();
     exit(0);
     return 0;
 }

@@ -67,7 +67,7 @@ int tcp_synrecv(struct tcp_sock *tcpsock) {
         return -1;
     if (tcpsock->parent->accept_backlog >= tcpsock->parent->backlog)
         return -1;
-    printf("syn recv process %d %d\n", tcpsock->parent->accept_backlog,tcpsock->parent->backlog );
+    
     list_del(&tcpsock->list);
     list_add(&tcpsock->list, &tcpsock->parent->accept_queue);
     tcpsock->parent->accept_backlog++;
