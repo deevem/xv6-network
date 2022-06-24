@@ -185,7 +185,7 @@ ifndef CPUS
 CPUS := 3
 endif
 
-FWDPORT = $(shell expr `id -u` % 5000 + 25999)
+FWDPORT = 12345
 TCPPORT = 2222
 
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic

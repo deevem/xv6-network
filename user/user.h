@@ -53,7 +53,7 @@ void *memcpy(void *, const void *, uint);
 uint32 dns(char *);
 
 // the server ip
-#define SERVER_IP1 183
-#define SERVER_IP2 172
-#define SERVER_IP3 154
-#define SERVER_IP4 13
+#define SERVER_IP1 101
+#define SERVER_IP2 43
+#define SERVER_IP3 165
+#define SERVER_IP4 192
