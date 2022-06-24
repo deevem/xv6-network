@@ -101,14 +101,12 @@ int main(int argc, char *argv[]) {
     char *d = parse_http_header(fd, &rn);
 
     if (content_len > 0) {
-        printf("content len\n");
         int n;
         write(1, d, content_len < rn ? content_len : rn);
         content_len -= rn;
         if (content_len > 0) {
             while ((n = read(fd, buffer, BUFFER_SIZE)) > 0) {
-                printf("%d\n", n);
-                //write(1, buffer, content_len < n ? content_len : n);
+                write(1, buffer, content_len < n ? content_len : n);
                 content_len -= n;
                 if (content_len == 0)
                     break;
