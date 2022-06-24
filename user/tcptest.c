@@ -36,9 +36,9 @@ void asServer() {
 
     read(nfd, buffer, 1024);
 
-    printf(buffer);
+    char message[] = "test message form xv6\0";
+    write(nfd, (const void *)message, strlen(message));
 
-    printf("accept %d!\n", nfd);
 
     close(nfd);
 
@@ -46,7 +46,7 @@ void asServer() {
 }
 
 int main() {
-    asServer();
+    asClient();
     exit(0);
     return 0;
 }

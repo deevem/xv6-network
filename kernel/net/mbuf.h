@@ -61,14 +61,17 @@ static inline uint32_t tcp_mbuf_queue_len(const struct tcp_mbuf_queue *q) {
 
 static inline void tcp_mbuf_queue_init(struct tcp_mbuf_queue *q) {
     list_init(&q->head);
+    q->len = 0;
 }
 
 static inline void tcp_mbuf_queue_add(struct tcp_mbuf_queue* q, struct mbuf* item, struct mbuf* next) {
     list_add_tail(&item->list, &next->list);
+    q->len++;
 }
 
 static inline void tcp_mbuf_enqueue(struct tcp_mbuf_queue* q, struct mbuf* item) {
     list_add_tail(&item->list, &q->head);
+    q->len++;
 }
 
 static inline struct mbuf* tcp_mbuf_dequeue(struct tcp_mbuf_queue* q){

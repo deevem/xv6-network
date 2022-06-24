@@ -42,10 +42,11 @@ int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m){
     if(m->start_seq == sock->tcb.recv_next){
         sock->tcb.recv_next += m->len;
         m->refcnt++;
+
         tcp_mbuf_enqueue(&sock->rcv_queue,m);
 
         tcp_consume_ofo_queue(sock);
-
+        printf("rcv wake up %d \n", sock);
         wakeup(&sock->wait_rcv);
     } else {
         tcp_check_ofo_queue(sock,m);
@@ -58,7 +59,6 @@ int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m){
 int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len, int* psh){
     struct tcp_hdr* th;
     int rlen = 0;
-
     while(!tcp_mbuf_queue_empty(&sock->rcv_queue) && rlen < len){
         struct mbuf* m = tcp_mbuf_queue_peek(&sock->rcv_queue);
         if(m == NULL) break;
@@ -68,13 +68,17 @@ int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len, int* psh){
         int dlen = (rlen + m->len) > len ? (len-rlen) : m->len;
         copyout(myproc()->pagetable,ubuf,m->head,dlen);
 
+
         m->len -= dlen;
         m->head += dlen;
         rlen += dlen;
         ubuf += dlen;
+
+        if(th->psh)
+            *psh = 1;
         
         if(m->len == 0){
-            if(th->psh) *psh = 1;
+
             tcp_mbuf_dequeue(&sock->rcv_queue);
             mbuffree(m);
         }

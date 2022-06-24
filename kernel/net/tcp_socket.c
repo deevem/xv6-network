@@ -211,7 +211,6 @@ void clear_listen_queue(struct tcp_sock *tcpsock) {
 
 int tcp_close(struct file *f) {
     struct tcp_sock *tcpsock = f->tcpsock;
-    printf("tcp close procedure\n");
     acquire(&tcpsock->spinlk);
     
     switch (tcpsock->state) {
