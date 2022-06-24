@@ -98,7 +98,7 @@ int tcp_receive(struct tcp_sock* tcpsock, uint64_t buf, int len){
         if (psh == 1) break;
         if (rlen == len) break;
 
-        if (rlen < len)
+        if (rlen < len) 
             sleep(&tcpsock->wait_rcv, &tcpsock->spinlk);
     }
 

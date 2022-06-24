@@ -70,6 +70,9 @@ struct tcp_sock *tcp_sock_alloc() {
     list_add(&tcpsock->tcpsock_list, &tcpsocks_list_head);
     release(&tcpsocks_list_lk);
 
+    tcp_mbuf_queue_init(&tcpsock->rcv_queue);
+    tcp_mbuf_queue_init(&tcpsock->ofo_queue);
+
     return tcpsock;
 }
 

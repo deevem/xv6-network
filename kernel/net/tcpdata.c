@@ -34,6 +34,7 @@ static void tcp_check_ofo_queue(struct tcp_sock* sock, struct mbuf* m){
 
 
 int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m){
+
     if(!sock->tcb.recv_window){
         return -1;
     }
@@ -49,6 +50,7 @@ int tcp_data_queue(struct tcp_sock* sock, struct mbuf* m){
     } else {
         tcp_check_ofo_queue(sock,m);
     }
+
     tcp_send_ack(sock);
     return 0;
 }
@@ -72,7 +74,7 @@ int tcp_data_dequeue(struct tcp_sock* sock, uint64 ubuf, int len, int* psh){
         ubuf += dlen;
         
         if(m->len == 0){
-             if(th->psh) *psh = 1;
+            if(th->psh) *psh = 1;
             tcp_mbuf_dequeue(&sock->rcv_queue);
             mbuffree(m);
         }

@@ -81,15 +81,24 @@ int tcp_closed(struct mbuf *m) {
     return 0;
 }
 
-int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr) {
+int tcp_established(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf* m) {
     if (tcphdr->fin == 1) {
         tcp_set_state(tcpsock, TCP_LAST_ACK);
         tcpsock->tcb.recv_next += 1;
         tcp_send_ack(tcpsock);
         tcp_send_fin(tcpsock);
     } else {
-        // TODO: update window
-        printf("Established\n");
+        if (tcpsock->tcb.send_unack <= tcphdr->ack_seq && tcpsock->tcb.send_next >= tcphdr->ack_seq)
+            if (tcpsock->tcb.send_win1 < tcphdr->seq || (tcpsock->tcb.send_win1 == tcphdr->seq && tcpsock->tcb.send_win2 <= tcphdr->ack_seq)) {
+                printf("Window updated\n");
+                tcpsock->tcb.send_window = tcphdr->window;
+                tcpsock->tcb.send_win1 = tcphdr->seq;
+                tcpsock->tcb.send_win2 = tcphdr->ack_seq;
+            }
+    }   
+
+    if (tcphdr->psh || m->len > 0) {
+        tcp_data_queue(tcpsock, m);
     }
     return 0;
 }
@@ -131,7 +140,7 @@ int tcp_input_state(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct ip_
         case TCP_SYN_RECEIVED:
             return tcp_synrecv(tcpsock);
         case TCP_ESTABLISHED:
-            return tcp_established(tcpsock, tcphdr);
+            return tcp_established(tcpsock, tcphdr, m);
         case TCP_LAST_ACK:
             return tcp_lastack(tcpsock, tcphdr);
         case TCP_FIN_WAIT_1:
