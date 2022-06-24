@@ -13,7 +13,6 @@ char* strcat(char* str1, char* str2)
   {
     result[i] = str1[i];
   }
-  printf("1\n");
   result[strlen(str1)] = ' ';
   for (int i = 0; i < strlen(str2); i++)
   {
@@ -21,9 +20,6 @@ char* strcat(char* str1, char* str2)
   }
   
   result[strlen(str1) + strlen(str2) + 1] = '\0';
-  printf("2\n");
-  result[strlen(str1) + strlen(str2) + 2] = '\0';
-  printf("enter\n");
   return result;
 }
 
@@ -57,14 +53,11 @@ int main(int argc, char**argv){
     char * output = first;
     for (int i = 0; i < argc - 1; i++)
     {
-      printf("%s %s\n", first, argv[i + 1]);
       output = strcat(first, argv[i + 1]);
       if (i > 0)
         {
-          printf("what\n");
           free(first);
         }
-      printf("%s\n", output);
       first = output;
       
     }
