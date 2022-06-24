@@ -18,6 +18,8 @@ void asClient() {
     exit(0);
 }
 
+char buffer[3000];
+
 void asServer() {
     int fd;
     if ((fd = bind_tcp(2222)) < 0) {
@@ -32,6 +34,10 @@ void asServer() {
 
     int nfd = accept_tcp(fd);
 
+    read(nfd, buffer, 1024);
+
+    printf(buffer);
+
     printf("accept %d!\n", nfd);
 
     close(nfd);
@@ -40,7 +46,7 @@ void asServer() {
 }
 
 int main() {
-    asClient();
+    asServer();
     exit(0);
     return 0;
 }

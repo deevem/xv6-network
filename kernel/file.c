@@ -136,7 +136,9 @@ fileread(struct file *f, uint64 addr, int n)
         struct proc *pr = myproc();
         copyout(pr->pagetable, addr + r, (char*)&f->sock->icmp_recvttl, sizeof(f->sock->icmp_recvttl));
     }
-  } else {
+  } else if (f->type == FD_SOCK_TCP){
+    r = tcp_read(f, addr, n);
+  }else {
     panic("fileread");
   }
 
