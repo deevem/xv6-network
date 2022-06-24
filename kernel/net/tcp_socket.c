@@ -127,20 +127,36 @@ int tcp_listen(struct file *f, int backlog) {
     return 0;
 }
 
-int tcp_read(struct file *f, uint64_t addr, int n) {
-    int rest_len = 0;
-    struct tcp_sock *tcpsock = f->tcpsock;
-    
-    if (tcpsock == NULL)
-        return -1;
-    else if (tcpsock->state == TCP_CLOSE)
-        return -1;
-    
-    acquire(&tcpsock->spinlk);
-//    rest_len = tcp_receive(tcpsock, addr, n);
-    release(&tcpsock->spinlk);
+int tcp_read(struct file *f, uint64_t addr, int n){
+    int rlen = 0;
+    struct tcp_sock* sock = f->tcpsock;
+    if(!sock) return -1;
 
-    return rest_len;
+    acquire(&sock->spinlk);
+    switch (sock->state)
+    {
+    case TCP_LISTEN:
+    case TCP_SYN_SENT:
+    case TCP_SYN_RECEIVED:
+    case TCP_LAST_ACK:
+    case TCP_CLOSING:
+    case TCP_TIME_WAIT:
+    case TCP_CLOSE:
+        release(&sock->spinlk);
+        break;
+    case TCP_CLOSE_WAIT:
+        if (!tcp_mbuf_queue_empty(&sock->rcv_queue))
+            break;
+    case TCP_ESTABLISHED:
+    case TCP_FIN_WAIT_1:
+    case TCP_FIN_WAIT_2:
+        break;
+    }
+
+    rlen = tcp_receive(sock,addr,n);
+    release(&sock->spinlk);
+
+    return rlen;
 }
 
 int tcp_write(struct file *f, uint64_t buffer, int len) {

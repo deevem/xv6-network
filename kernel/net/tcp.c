@@ -105,38 +105,6 @@ int tcp_receive(struct tcp_sock* tcpsock, uint64_t buf, int len){
     return rlen;
 }
 
-int tcp_read(struct file *f, uint64_t addr, int n){
-    int rlen = 0;
-    struct tcp_sock* sock = f->tcpsock;
-    if(!sock) return -1;
-
-    acquire(&sock->spinlk);
-    switch (sock->state)
-    {
-    case TCP_LISTEN:
-    case TCP_SYN_SENT:
-    case TCP_SYN_RECEIVED:
-    case TCP_LAST_ACK:
-    case TCP_CLOSING:
-    case TCP_TIME_WAIT:
-    case TCP_CLOSE:
-        release(&sock->spinlk);
-        break;
-    case TCP_CLOSE_WAIT:
-        if (!tcp_mbuf_queue_empty(&sock->rcv_queue))
-            break;
-    case TCP_ESTABLISHED:
-    case TCP_FIN_WAIT_1:
-    case TCP_FIN_WAIT_2:
-        break;
-    }
-
-    rlen = tcp_receive(sock,addr,n);
-    release(&sock->spinlk);
-
-    return rlen;
-}
-
 void tcp_sock_tx(struct tcp_sock *tcpsock, struct tcp_hdr *tcphdr, struct mbuf *m, uint32_t seq) {
     tcphdr->data_offset = TCP_DOFFSET;
     tcphdr->src_port = htons(tcpsock->src_port);
