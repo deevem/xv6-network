@@ -107,7 +107,7 @@ $U/initcode: $U/initcode.S
 tags: $(OBJS) _init
 	etags *.S *.c
 
-ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o $U/dns.o
+ULIB = $U/umalloc.o $U/ulib.o $U/usys.o $U/printf.o  $U/dns.o
 
 _%: %.o $(ULIB)
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
@@ -140,7 +140,10 @@ UPROGS=\
 	$U/_echo\
 	$U/_ping\
 	$U/_nslookup\
-	$U/_sendudp\
+	$U/_new_group\
+	$U/_add_group\
+	$U/_send\
+	$U/_record\
 	$U/_forktest\
 	$U/_grep\
 	$U/_init\
