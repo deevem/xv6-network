@@ -99,8 +99,6 @@ int main(int argc, char *argv[]) {
 
     int rn = 0;
     char *d = parse_http_header(fd, &rn);
-    
-    printf("%d %d", rn, content_len);
 
     if (content_len > 0) {
         printf("content len\n");
