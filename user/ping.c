@@ -88,10 +88,11 @@ int main(int argc, char **argv)
     for (int i = 0; i < attempts; i++)
     {
         sleep(5);
-        uint16 header[3];
+        uint16 header[4];
         header[0] = 0x0800; // icmp type
-        header[1] = id; // icmp code
-        header[2] = icmp_seq;
+        header[1] = 0x0800 + icmp_seq + id;
+        header[2] = id; // icmp code
+        header[3] = icmp_seq;
         start_time = uptime();
         if (write(fd, header, sizeof(header)) < 0)
         {
